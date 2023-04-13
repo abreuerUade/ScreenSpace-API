@@ -1,0 +1,18 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  title= subject 
+  include __style
+.container
+  img.logo(src=`http://localhost:3500/images/logo.png` alt='Screen Space Logo')
+  br
+  h1 Confirm Your Email
+  p
+    | Thanks for signing up for Screen Space! Please confirm your email address by clicking the link below:
+  .btn-container
+    a.btn(href=`${url}`) Confirm Email Address
+  p If you didn&apos;t create an account with Screen Space, please ignore this email.
+  p.footer
+    | Thanks,
+    br
+    | The Screen Space Team
