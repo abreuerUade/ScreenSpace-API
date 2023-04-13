@@ -1,0 +1,2828 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "ScreenSpace",
+    "description" : "This is a non commercial project for a software engineering degree. It´s a REST API for cinema management and movie ticket booking mobile app.",
+    "contact" : {
+      "email" : "contact@screenspace.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/BREUERANDRES/ScreenSpace-API/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  }, {
+    "url" : "http://localhost:3500/api/v1",
+    "description" : "Developement URL"
+  } ],
+  "tags" : [ {
+    "name" : "Ping",
+    "description" : "Operation available to regular developers"
+  }, {
+    "name" : "Users",
+    "description" : "Operation available to regular users"
+  }, {
+    "name" : "Owners",
+    "description" : "Secured Admin-only calls"
+  }, {
+    "name" : "Cinemas",
+    "description" : "Operations available only to cinema owners"
+  }, {
+    "name" : "Theaters",
+    "description" : "Operations available only to cinema owners"
+  }, {
+    "name" : "Showtimes",
+    "description" : "Operations available only to cinema owners"
+  }, {
+    "name" : "movies",
+    "description" : "Operations available only to cinema owners"
+  }, {
+    "name" : "Bookings",
+    "description" : "Operations available only to logged users"
+  }, {
+    "name" : "Ratings",
+    "description" : "Operations available only to logged users"
+  } ],
+  "paths" : {
+    "/ping" : {
+      "get" : {
+        "tags" : [ "Ping" ],
+        "description" : "Check the availability of the server and database.",
+        "responses" : {
+          "200" : {
+            "description" : "API working correctly"
+          },
+          "404" : {
+            "description" : "Server not found"
+          }
+        }
+      }
+    },
+    "/users/auth" : {
+      "post" : {
+        "tags" : [ "Users" ],
+        "summary" : "Log in user",
+        "description" : "Creates a new user if loggin in for the first time.",
+        "operationId" : "logUser",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/users_auth_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid input"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Users" ],
+        "summary" : "Log Out",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "logoutUser",
+        "responses" : {
+          "204" : {
+            "description" : "Successful operation"
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          },
+          "403" : {
+            "description" : "Forbidden Operation"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/users/" : {
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Get logged user data",
+        "description" : "By passing in the appropriate options, you can search for available specific user",
+        "operationId" : "searchUserById",
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Users" ],
+        "summary" : "Delete logged user",
+        "description" : "This can only be done by the logged in user.",
+        "operationId" : "deleteUser",
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation"
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          },
+          "403" : {
+            "description" : "Forbidden Operation"
+          },
+          "404" : {
+            "description" : "User not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Users" ],
+        "summary" : "Update logged user",
+        "description" : "This can only be done by the logged in user.",
+        "operationId" : "updateUser",
+        "requestBody" : {
+          "description" : "Update an existent user in the store",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/users_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          },
+          "403" : {
+            "description" : "Forbidden Operation"
+          },
+          "404" : {
+            "description" : "User not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/owners/confirmedEmail/{token}" : {
+      "get" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Owner confirmed email",
+        "description" : "When the owner signs up an email is sent to get confirmation",
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "path",
+          "description" : "Hashed token. The email has the token.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Token Expired or Invalid"
+          }
+        }
+      }
+    },
+    "/owners/auth" : {
+      "post" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Log In",
+        "description" : "loginOwner",
+        "requestBody" : {
+          "description" : "Log in with email and password",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/owners_auth_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_1"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Log Out",
+        "description" : "Session is changed to invalid.",
+        "operationId" : "logoutOwner",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_2"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/owners" : {
+      "get" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Get logged owners data",
+        "description" : "Gets owners personal information. Must be logged in.",
+        "operationId" : "getOwner",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_3"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Sign Up",
+        "description" : "Create a new account for owner and send email for validation",
+        "operationId" : "addOwner",
+        "requestBody" : {
+          "description" : "Signup only needs email and password",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/owners_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_4"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Input Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_1"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Delete logged Owner",
+        "description" : "Owner is modified to inactive.",
+        "operationId" : "deleteOwner",
+        "responses" : {
+          "204" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Update logged Owner",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "updateOwner",
+        "requestBody" : {
+          "description" : "Update an existent Owner. Can update one or more properties",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/owners_body_1"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_3"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/owners/forgotPassword" : {
+      "post" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Reset password",
+        "description" : "Sends email with a provisional password and a token",
+        "operationId" : "forgotPassword",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/owners_forgotPassword_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_5"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Input Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/owners/resetPassword/{token}" : {
+      "patch" : {
+        "tags" : [ "Owners" ],
+        "summary" : "Reset password",
+        "description" : "Verifies that token was not modified and sets new password",
+        "operationId" : "resetPassword",
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "path",
+          "description" : "Hashed token.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/resetPassword_token_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_6"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Input Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cinemas" : {
+      "get" : {
+        "tags" : [ "Cinemas" ],
+        "summary" : "Searches all cinemas",
+        "description" : "Searches all cinemas",
+        "operationId" : "searchCinema",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_7"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Cinemas" ],
+        "summary" : "Create new cinema",
+        "description" : "Create new cinema. Must be done by a logged owner",
+        "operationId" : "addCinema",
+        "requestBody" : {
+          "description" : "Create a new cinema",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/cinemas_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Cinema alredy exists",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_3"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/cinemas/{cinemaId}" : {
+      "get" : {
+        "tags" : [ "Cinemas" ],
+        "summary" : "Searches Cinema By Id",
+        "description" : "Gets cinema by id",
+        "operationId" : "searchCinemaById",
+        "parameters" : [ {
+          "name" : "cinemaId",
+          "in" : "path",
+          "description" : "cinema _id that needs to be found",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_1"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Cinema not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404_1"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Cinemas" ],
+        "summary" : "Delete User By Id",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "deleteCinema",
+        "parameters" : [ {
+          "name" : "cinemaId",
+          "in" : "path",
+          "description" : "cinema _id that needs to be deleted",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_1"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Cinema not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404_1"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Cinemas" ],
+        "summary" : "Update Cinema By Id",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "updateCinema",
+        "parameters" : [ {
+          "name" : "cinemaId",
+          "in" : "path",
+          "description" : "cinema _id that needs to be updated",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Update an existent Cinema",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/cinemas_cinemaId_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_1"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Cinema not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404_1"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/owners/{ownerId}/cinemas" : {
+      "get" : {
+        "tags" : [ "Cinemas" ],
+        "summary" : "Searches all cinemas from owner",
+        "description" : "Gets all cinemas from logged owner",
+        "operationId" : "searchCinemaByOwner",
+        "parameters" : [ {
+          "name" : "ownerId",
+          "in" : "path",
+          "description" : "owners _id to get cinemas from",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_7"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_1"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/cinemas-within/distance/{distance}/latlng/{latlng}" : {
+      "get" : {
+        "tags" : [ "Cinemas" ],
+        "summary" : "Searches Cinema By Id",
+        "description" : "By passing in the appropriate options, you can search for available inventory in the system",
+        "operationId" : "searchCinemasWithin",
+        "parameters" : [ {
+          "name" : "distance",
+          "in" : "path",
+          "description" : "Set the maximum distance to the cinema in km",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "latlng",
+          "in" : "path",
+          "description" : "Set your location",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "-34.48374569,-58345734"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_7"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/theaters" : {
+      "post" : {
+        "tags" : [ "Theaters" ],
+        "summary" : "Create new Theater",
+        "description" : "Create new Theater",
+        "operationId" : "addTheater",
+        "requestBody" : {
+          "description" : "Create a new Theater",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/theaters_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201_1"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Theater alredy exists",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_3"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/cinema/{cinemaId}/theaters" : {
+      "get" : {
+        "tags" : [ "Theaters" ],
+        "summary" : "Searches Theaters By Cinema",
+        "description" : "Gets a specific cinema theaters",
+        "operationId" : "searchTheaterByCinema",
+        "parameters" : [ {
+          "name" : "cinemaId",
+          "in" : "path",
+          "description" : "name that need to be deleted",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_7"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_1"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/theaters/{theaterId}" : {
+      "get" : {
+        "tags" : [ "Theaters" ],
+        "summary" : "Searches Theater By Id",
+        "description" : "Gets a single theater",
+        "operationId" : "searchTheaterById",
+        "parameters" : [ {
+          "name" : "theaterId",
+          "in" : "path",
+          "description" : "id of the theater",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201_1"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_1"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Theaters" ],
+        "summary" : "Delete Theaters By Id",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "deleteTheaters",
+        "parameters" : [ {
+          "name" : "theaterId",
+          "in" : "path",
+          "description" : "name that need to be deleted",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_204"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Theaters" ],
+        "summary" : "Update Theaters By Id",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "updateTheaters",
+        "parameters" : [ {
+          "name" : "theaterId",
+          "in" : "path",
+          "description" : "name that need to be updated",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Update an existent Cinema",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Theater"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201_1"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/showtimes" : {
+      "get" : {
+        "tags" : [ "Showtimes" ],
+        "summary" : "Searches Showtimes with query params",
+        "description" : "Gets all showtimes with query options",
+        "operationId" : "searchShowtime",
+        "parameters" : [ {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "Filter by date",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "default" : "available"
+          }
+        }, {
+          "name" : "movie",
+          "in" : "query",
+          "description" : "Filter by movie",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "default" : "available"
+          }
+        }, {
+          "name" : "cinema",
+          "in" : "query",
+          "description" : "Filter by cinema",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "default" : "available"
+          }
+        }, {
+          "name" : "availableSeats",
+          "in" : "query",
+          "description" : "Filter by available seats left",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "number"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_8"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_2"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Showtimes" ],
+        "summary" : "Create new Showtime",
+        "description" : "Create new Showtime",
+        "operationId" : "addShowtimes",
+        "requestBody" : {
+          "description" : "Create a new Showtime. Only available for logged owners",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/showtimes_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201_2"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Showtime alredy exists",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_3"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/showtime/{showtimeId}" : {
+      "get" : {
+        "tags" : [ "Showtimes" ],
+        "summary" : "Searches Showtime By Id",
+        "description" : "Get showtimes by id",
+        "operationId" : "searchShowtimeById",
+        "parameters" : [ {
+          "name" : "showtimeId",
+          "in" : "path",
+          "description" : "_id of the showtime needed",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_9"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404_2"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Showtimes" ],
+        "summary" : "Delete Showtime By Id",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "deleteShowtime",
+        "parameters" : [ {
+          "name" : "showtimeId",
+          "in" : "path",
+          "description" : "name that need to be deleted",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation"
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          },
+          "403" : {
+            "description" : "Forbidden Operation"
+          },
+          "404" : {
+            "description" : "Showtime not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Showtimes" ],
+        "summary" : "Update Showtime By Id",
+        "description" : "Update a showtime by id.",
+        "operationId" : "updateShowtime",
+        "parameters" : [ {
+          "name" : "showtimeId",
+          "in" : "path",
+          "description" : "name that need to be deleted",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Update an existent Showtime in the store",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Showtime"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Showtime"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          },
+          "403" : {
+            "description" : "Forbidden Operation"
+          },
+          "404" : {
+            "description" : "Showtime not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/cinemas/{cinemaId}/movies/{movieId}/showtimes" : {
+      "get" : {
+        "tags" : [ "Showtimes" ],
+        "summary" : "Searches Showtimes of a movie in a cinema",
+        "description" : "Gets all showtimes with query options",
+        "operationId" : "searchShowtimeBymovieAndCinema",
+        "parameters" : [ {
+          "name" : "cinemaId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "movieId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "Filter by date",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "default" : "available"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Showtime"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          },
+          "403" : {
+            "description" : "Forbidden Operation"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/movies" : {
+      "get" : {
+        "tags" : [ "movies" ],
+        "summary" : "Searches all movies",
+        "description" : "Search movies with query parameters",
+        "operationId" : "searchmovies",
+        "parameters" : [ {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Limit the size of movies",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "10"
+          }
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "For pagination",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "2"
+          }
+        }, {
+          "name" : "genre",
+          "in" : "query",
+          "description" : "Filter by genre",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "Terror"
+          }
+        }, {
+          "name" : "premiered",
+          "in" : "query",
+          "description" : "Filter by premiered",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "cinema",
+          "in" : "query",
+          "description" : "Filter by cinema",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "rating",
+          "in" : "query",
+          "description" : "Order by rating",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "number"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Movie"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/cinema/{cinemaId}/movies" : {
+      "get" : {
+        "tags" : [ "movies" ],
+        "summary" : "Searches all movies",
+        "description" : "Search movies with query parameters",
+        "operationId" : "cinemamovies",
+        "parameters" : [ {
+          "name" : "cinemaId",
+          "in" : "path",
+          "description" : "cinema id to get movies from",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Movie"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/movies/{movieId}" : {
+      "get" : {
+        "tags" : [ "movies" ],
+        "summary" : "Searches movie By Id",
+        "description" : "By passing in the appropriate options, you can search for available inventory in the system",
+        "operationId" : "searchmovieById",
+        "parameters" : [ {
+          "name" : "movieId",
+          "in" : "path",
+          "description" : "movie that need to be deleted",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Movie"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/bookings" : {
+      "get" : {
+        "tags" : [ "Bookings" ],
+        "summary" : "Searches user bookings",
+        "description" : "Get user bookings",
+        "operationId" : "searchBooking",
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Movie"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Bookings" ],
+        "summary" : "New showtime booking",
+        "description" : "Create new Booking",
+        "operationId" : "addBooking",
+        "requestBody" : {
+          "description" : "Create a new Booking",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/bookings_body"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Booking"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid input"
+          }
+        }
+      }
+    },
+    "/bookings/{bookingId}" : {
+      "delete" : {
+        "tags" : [ "Bookings" ],
+        "summary" : "Delete Booking By Id",
+        "description" : "This can only be done by the logged in user.",
+        "operationId" : "deleteBooking",
+        "parameters" : [ {
+          "name" : "bookingId",
+          "in" : "path",
+          "description" : "_id of the booking that needs to be deleted",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation"
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          },
+          "403" : {
+            "description" : "Forbidden Operation"
+          },
+          "404" : {
+            "description" : "Booking not found"
+          }
+        }
+      }
+    },
+    "/ratings" : {
+      "post" : {
+        "tags" : [ "Ratings" ],
+        "summary" : "Rate a movie",
+        "description" : "Rate a movie",
+        "operationId" : "rateMovie",
+        "requestBody" : {
+          "description" : "Create a new rating",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ratings_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Rating"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid input"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/user/{userId}/ratings" : {
+      "get" : {
+        "tags" : [ "Ratings" ],
+        "summary" : "Searches user ratings",
+        "description" : "Brings ratings by user or movie",
+        "operationId" : "searchUserRatings",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "_id of the user that provides reviews",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Rating"
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "ratingss not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/movies/{movieId}/ratings" : {
+      "get" : {
+        "tags" : [ "Ratings" ],
+        "summary" : "Searches movie ratings",
+        "description" : "Brings ratings by user or movie",
+        "operationId" : "searchmovieRatings",
+        "parameters" : [ {
+          "name" : "movieId",
+          "in" : "path",
+          "description" : "_id of the movie that provides reviews",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Rating"
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "ratingss not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "User" : {
+        "required" : [ "googleId", "mail", "name", "photo" ],
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "format" : "ObjectoId",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Tom Jones"
+          },
+          "mail" : {
+            "type" : "string",
+            "format" : "mail",
+            "example" : "tomjones@gmail.com"
+          },
+          "googleId" : {
+            "type" : "string",
+            "format" : "googleId",
+            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ"
+          },
+          "photo" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://....."
+          },
+          "booking" : {
+            "type" : "array",
+            "format" : "ObjectoId",
+            "nullable" : true,
+            "items" : {
+              "$ref" : "#/components/schemas/Booking/properties/_id"
+            }
+          }
+        }
+      },
+      "Owner" : {
+        "required" : [ "mail", "password" ],
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "format" : "ObjectoId",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Elon"
+          },
+          "mail" : {
+            "type" : "string",
+            "format" : "mail",
+            "example" : "elon@gmail.com"
+          },
+          "photo" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://....."
+          },
+          "cinemas" : {
+            "type" : "array",
+            "format" : "ObjectoId",
+            "nullable" : true,
+            "items" : {
+              "$ref" : "#/components/schemas/Cinema/properties/_id"
+            }
+          }
+        }
+      },
+      "Cinema" : {
+        "required" : [ "address", "company", "name", "price" ],
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "format" : "ObjectoId",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "company" : {
+            "type" : "string",
+            "example" : "Hoyts"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Hoyts Abasto"
+          },
+          "imageUrl" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://....."
+          },
+          "address" : {
+            "$ref" : "#/components/schemas/Address"
+          },
+          "geoloc" : {
+            "$ref" : "#/components/schemas/Cinema_geoloc"
+          },
+          "theaters" : {
+            "type" : "array",
+            "format" : "ObjectoId",
+            "items" : {
+              "$ref" : "#/components/schemas/Theater/properties/_id"
+            }
+          },
+          "active" : {
+            "type" : "boolean",
+            "example" : true
+          }
+        }
+      },
+      "Address" : {
+        "required" : [ "city", "country", "county", "number", "state", "street" ],
+        "type" : "object",
+        "properties" : {
+          "street" : {
+            "type" : "string",
+            "example" : "Av. Corrientes"
+          },
+          "number" : {
+            "type" : "integer",
+            "example" : 4567
+          },
+          "county" : {
+            "type" : "string",
+            "example" : "Abasto"
+          },
+          "city" : {
+            "type" : "string",
+            "example" : "CABA"
+          },
+          "state" : {
+            "type" : "string",
+            "example" : "Buenos Aires"
+          },
+          "country" : {
+            "type" : "string",
+            "example" : "Argentina"
+          }
+        }
+      },
+      "Theater" : {
+        "required" : [ "cinema", "numberOfCols", "numberOfRows", "theaterNumber" ],
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "format" : "ObjectoId",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "theaterNumber" : {
+            "type" : "number",
+            "example" : 1
+          },
+          "cinema" : {
+            "$ref" : "#/components/schemas/Cinema/properties/_id"
+          },
+          "numberOfRows" : {
+            "type" : "number",
+            "example" : 20
+          },
+          "numberOfCols" : {
+            "type" : "number",
+            "example" : 10
+          },
+          "active" : {
+            "type" : "boolean",
+            "example" : true
+          }
+        }
+      },
+      "Showtime" : {
+        "required" : [ "movie", "startTime", "theater" ],
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "format" : "ObjectoId",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "cinema" : {
+            "$ref" : "#/components/schemas/Cinema/properties/_id"
+          },
+          "theater" : {
+            "$ref" : "#/components/schemas/Theater/properties/_id"
+          },
+          "movie" : {
+            "$ref" : "#/components/schemas/Movie/properties/_id"
+          },
+          "startTime" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "availableSeatsLeft" : {
+            "type" : "number",
+            "example" : 20
+          },
+          "seats" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/bookings_seats"
+            }
+          }
+        }
+      },
+      "Movie" : {
+        "required" : [ "actors", "director", "durationMin", "genre", "premiereDate", "synopsis", "title" ],
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "format" : "ObjectoId",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "title" : {
+            "type" : "string",
+            "example" : "The Grand Budapest Hotel"
+          },
+          "genre" : {
+            "type" : "string",
+            "enum" : [ "Terror", "Action", "Romance", "War", "Sci-Fi", "Documentary" ]
+          },
+          "synopsis" : {
+            "type" : "string"
+          },
+          "imageUrl" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://www.imdb.com/title/tt2278388/mediaviewer/rm1834474496/?ref_=tt_ov_i"
+          },
+          "premiereDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "durationMin" : {
+            "type" : "number",
+            "example" : 120
+          },
+          "director" : {
+            "type" : "string",
+            "example" : "Wes Anderson"
+          },
+          "actors" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "example" : "[\"Ralph Fiennes\",\"Bill Murray\"]"
+            }
+          },
+          "avgRating" : {
+            "type" : "number",
+            "format" : "float",
+            "example" : 4.2
+          }
+        }
+      },
+      "Rating" : {
+        "required" : [ "comment", "date", "movie", "rating", "user" ],
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "format" : "ObjectoId",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "rating" : {
+            "maximum" : 10,
+            "minimum" : 1,
+            "type" : "number",
+            "default" : 5
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "comment" : {
+            "type" : "string"
+          },
+          "movie" : {
+            "$ref" : "#/components/schemas/Movie/properties/_id"
+          },
+          "user" : {
+            "$ref" : "#/components/schemas/User/properties/_id"
+          }
+        }
+      },
+      "Booking" : {
+        "required" : [ "seats", "showtime", "total" ],
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "format" : "ObjectoId",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "user" : {
+            "$ref" : "#/components/schemas/User/properties/_id"
+          },
+          "showtime" : {
+            "type" : "array",
+            "format" : "ObjectoId",
+            "nullable" : true,
+            "items" : {
+              "$ref" : "#/components/schemas/Showtime/properties/_id"
+            }
+          },
+          "seats" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/bookings_seats"
+            }
+          },
+          "total" : {
+            "type" : "number",
+            "format" : "float",
+            "example" : 49.99
+          },
+          "active" : {
+            "type" : "boolean",
+            "example" : true
+          }
+        }
+      },
+      "users_auth_body" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "example" : "Tom Jones"
+          },
+          "mail" : {
+            "type" : "string",
+            "format" : "mail",
+            "example" : "tomjones@gmail.com"
+          },
+          "googleId" : {
+            "type" : "string",
+            "format" : "googleId",
+            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ"
+          },
+          "photo" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://....."
+          }
+        }
+      },
+      "users_body" : {
+        "type" : "object",
+        "properties" : {
+          "firstName" : {
+            "type" : "string",
+            "example" : "Tom"
+          },
+          "lastName" : {
+            "type" : "string",
+            "example" : "Jones"
+          },
+          "mail" : {
+            "type" : "string",
+            "format" : "mail",
+            "example" : "tomjones@gmail.com"
+          },
+          "imageUrl" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://....."
+          },
+          "booking" : {
+            "type" : "array",
+            "format" : "ObjectoId",
+            "nullable" : true,
+            "items" : {
+              "$ref" : "#/components/schemas/Booking/properties/_id"
+            }
+          }
+        }
+      },
+      "inline_response_200" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_data"
+          }
+        }
+      },
+      "owners_auth_body" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "example" : "user@mail.com"
+          },
+          "password" : {
+            "type" : "string",
+            "example" : "pass1234"
+          }
+        }
+      },
+      "inline_response_200_1" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_1_data"
+          }
+        }
+      },
+      "inline_response_400" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Invalid email or password"
+          }
+        }
+      },
+      "inline_response_404" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "There is no owner with thar email"
+          }
+        }
+      },
+      "inline_response_200_2" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "accessToken" : {
+            "type" : "string",
+            "example" : "null"
+          },
+          "refreshToken" : {
+            "type" : "string",
+            "example" : "null"
+          }
+        }
+      },
+      "inline_response_403" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "You must be logged in"
+          }
+        }
+      },
+      "inline_response_200_3" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_3_data"
+          }
+        }
+      },
+      "owners_body" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "example" : "user@mail.com"
+          },
+          "password" : {
+            "type" : "string",
+            "example" : "pass1234"
+          }
+        }
+      },
+      "inline_response_200_4" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Confirmation email sent!"
+          }
+        }
+      },
+      "inline_response_400_1" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Enter a valid email"
+          }
+        }
+      },
+      "inline_response_204" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          }
+        }
+      },
+      "owners_body_1" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "example" : "Tom"
+          },
+          "mail" : {
+            "type" : "string",
+            "format" : "mail",
+            "example" : "tomjones@gmail.com"
+          },
+          "imageUrl" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://....."
+          }
+        }
+      },
+      "owners_forgotPassword_body" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "example" : "user@mail.com"
+          }
+        }
+      },
+      "inline_response_200_5" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Password recovery email sent!"
+          }
+        }
+      },
+      "resetPassword_token_body" : {
+        "type" : "object",
+        "properties" : {
+          "password" : {
+            "type" : "string",
+            "example" : "newPassword1234"
+          }
+        }
+      },
+      "inline_response_200_6" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Password Updated"
+          }
+        }
+      },
+      "inline_response_400_2" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Token expired or invalid"
+          }
+        }
+      },
+      "inline_response_200_7" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "results" : {
+            "type" : "number",
+            "example" : 5
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_7_data"
+          }
+        }
+      },
+      "cinemas_body" : {
+        "type" : "object",
+        "properties" : {
+          "company" : {
+            "type" : "string",
+            "example" : "Hoyts"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Hoyts Abasto"
+          },
+          "address" : {
+            "$ref" : "#/components/schemas/Address"
+          },
+          "price" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "inline_response_201" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_201_data"
+          }
+        }
+      },
+      "inline_response_400_3" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Duplicate key error"
+          }
+        }
+      },
+      "inline_response_403_1" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "You do not have access to that document"
+          }
+        }
+      },
+      "inline_response_404_1" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "No doc found with that id"
+          }
+        }
+      },
+      "cinemas_cinemaId_body" : {
+        "type" : "object",
+        "properties" : {
+          "price" : {
+            "type" : "integer"
+          },
+          "active" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "theaters_body" : {
+        "type" : "object",
+        "properties" : {
+          "theaterNumber" : {
+            "type" : "number",
+            "example" : 1
+          },
+          "numberOfRows" : {
+            "type" : "number",
+            "example" : 20
+          },
+          "numberOfCols" : {
+            "type" : "number",
+            "example" : 10
+          },
+          "cinema" : {
+            "$ref" : "#/components/schemas/Cinema/properties/_id"
+          }
+        }
+      },
+      "inline_response_201_1" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_201_1_data"
+          }
+        }
+      },
+      "inline_response_200_8" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "results" : {
+            "type" : "number",
+            "example" : 5
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_8_data"
+          }
+        }
+      },
+      "inline_response_403_2" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "You you must be logged"
+          }
+        }
+      },
+      "showtimes_body" : {
+        "type" : "object",
+        "properties" : {
+          "theater" : {
+            "$ref" : "#/components/schemas/Theater/properties/_id"
+          },
+          "movie" : {
+            "$ref" : "#/components/schemas/Movie/properties/_id"
+          },
+          "startTime" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "price" : {
+            "type" : "number",
+            "example" : 1000
+          }
+        }
+      },
+      "inline_response_201_2" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_201_2_data"
+          }
+        }
+      },
+      "inline_response_200_9" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_8_data"
+          }
+        }
+      },
+      "inline_response_404_2" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "No document was found with that id"
+          }
+        }
+      },
+      "bookings_seats" : {
+        "properties" : {
+          "row" : {
+            "type" : "number",
+            "example" : 3
+          },
+          "columnd" : {
+            "type" : "number",
+            "example" : 3
+          },
+          "taken" : {
+            "type" : "boolean",
+            "example" : false
+          }
+        }
+      },
+      "bookings_body" : {
+        "type" : "object",
+        "properties" : {
+          "showtime" : {
+            "type" : "array",
+            "format" : "ObjectoId",
+            "items" : {
+              "$ref" : "#/components/schemas/Showtime/properties/_id"
+            }
+          },
+          "seats" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/bookings_seats"
+            }
+          },
+          "total" : {
+            "type" : "number",
+            "format" : "float",
+            "example" : 49.99
+          }
+        }
+      },
+      "ratings_body" : {
+        "type" : "object",
+        "properties" : {
+          "rating" : {
+            "maximum" : 10,
+            "minimum" : 1,
+            "type" : "number",
+            "default" : 5
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "comment" : {
+            "type" : "string"
+          },
+          "movie" : {
+            "$ref" : "#/components/schemas/Movie/properties/_id"
+          },
+          "user" : {
+            "$ref" : "#/components/schemas/User/properties/_id"
+          }
+        }
+      },
+      "Cinema_geoloc" : {
+        "type" : "object",
+        "properties" : {
+          "long" : {
+            "type" : "number",
+            "example" : -37.1815644
+          },
+          "lat" : {
+            "type" : "number",
+            "example" : -56.9209917
+          }
+        }
+      },
+      "inline_response_200_data" : {
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "example" : "d290f1ee6c544b0190e6d701748f0851"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : ""
+          },
+          "mail" : {
+            "type" : "string",
+            "example" : "example@mail.com"
+          },
+          "photo" : {
+            "type" : "string",
+            "example" : "public/owners/images/default.png"
+          },
+          "cinemas" : {
+            "type" : "array",
+            "example" : [ ],
+            "items" : {
+              "$ref" : "#/components/schemas/Cinema"
+            }
+          }
+        }
+      },
+      "inline_response_200_1_data" : {
+        "type" : "object",
+        "properties" : {
+          "owner" : {
+            "$ref" : "#/components/schemas/Owner"
+          },
+          "accessToken" : {
+            "type" : "string",
+            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          },
+          "refreshToken" : {
+            "type" : "string",
+            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          }
+        }
+      },
+      "inline_response_200_3_data" : {
+        "type" : "object",
+        "properties" : {
+          "owner" : {
+            "$ref" : "#/components/schemas/Owner"
+          }
+        }
+      },
+      "inline_response_200_7_data" : {
+        "type" : "object",
+        "properties" : {
+          "cinemas" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Cinema"
+            }
+          }
+        }
+      },
+      "inline_response_201_data" : {
+        "type" : "object",
+        "properties" : {
+          "cinema" : {
+            "$ref" : "#/components/schemas/Cinema"
+          }
+        }
+      },
+      "inline_response_201_1_data" : {
+        "type" : "object",
+        "properties" : {
+          "cinema" : {
+            "$ref" : "#/components/schemas/Theater"
+          }
+        }
+      },
+      "inline_response_200_8_data" : {
+        "type" : "object",
+        "properties" : {
+          "cinemas" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Theater"
+            }
+          }
+        }
+      },
+      "inline_response_201_2_data" : {
+        "type" : "object",
+        "properties" : {
+          "cinema" : {
+            "$ref" : "#/components/schemas/Showtime"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      }
+    }
+  }
+}
