@@ -20,7 +20,7 @@
     "description" : "Developement URL"
   } ],
   "tags" : [ {
-    "name" : "Ping",
+    "name" : "Health Check",
     "description" : "Operation available to regular developers"
   }, {
     "name" : "Users",
@@ -50,7 +50,7 @@
   "paths" : {
     "/ping" : {
       "get" : {
-        "tags" : [ "Ping" ],
+        "tags" : [ "Health Check" ],
         "description" : "Check the availability of the server and database.",
         "responses" : {
           "200" : {
@@ -79,17 +79,24 @@
         },
         "responses" : {
           "200" : {
-            "description" : "Successful operation",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/User"
+                  "$ref" : "#/components/schemas/inline_response_200"
                 }
               }
             }
           },
           "400" : {
-            "description" : "Invalid input"
+            "description" : "Server Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400"
+                }
+              }
+            }
           }
         }
       },
@@ -99,14 +106,25 @@
         "description" : "This can only be done by the logged in owner.",
         "operationId" : "logoutUser",
         "responses" : {
-          "204" : {
-            "description" : "Successful operation"
-          },
-          "400" : {
-            "description" : "Invalid ID supplied"
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_1"
+                }
+              }
+            }
           },
           "403" : {
-            "description" : "Forbidden Operation"
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -122,14 +140,11 @@
         "operationId" : "searchUserById",
         "responses" : {
           "200" : {
-            "description" : "search results matching criteria",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/User"
-                  }
+                  "$ref" : "#/components/schemas/inline_response_200_2"
                 }
               }
             }
@@ -151,14 +166,15 @@
           "200" : {
             "description" : "Successful operation"
           },
-          "400" : {
-            "description" : "Invalid ID supplied"
-          },
           "403" : {
-            "description" : "Forbidden Operation"
-          },
-          "404" : {
-            "description" : "User not found"
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -182,23 +198,24 @@
         },
         "responses" : {
           "200" : {
-            "description" : "Successful operation",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/User"
+                  "$ref" : "#/components/schemas/inline_response_200_2"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Invalid ID supplied"
-          },
           "403" : {
-            "description" : "Forbidden Operation"
-          },
-          "404" : {
-            "description" : "User not found"
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -228,7 +245,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200"
+                  "$ref" : "#/components/schemas/inline_response_200_3"
                 }
               }
             }
@@ -260,7 +277,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_1"
+                  "$ref" : "#/components/schemas/inline_response_200_4"
                 }
               }
             }
@@ -270,7 +287,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400"
+                  "$ref" : "#/components/schemas/inline_response_400_1"
                 }
               }
             }
@@ -298,7 +315,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_2"
+                  "$ref" : "#/components/schemas/inline_response_200_1"
                 }
               }
             }
@@ -331,7 +348,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_3"
+                  "$ref" : "#/components/schemas/inline_response_200_5"
                 }
               }
             }
@@ -372,7 +389,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_4"
+                  "$ref" : "#/components/schemas/inline_response_200_6"
                 }
               }
             }
@@ -382,7 +399,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_1"
+                  "$ref" : "#/components/schemas/inline_response_400_2"
                 }
               }
             }
@@ -441,7 +458,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_3"
+                  "$ref" : "#/components/schemas/inline_response_200_5"
                 }
               }
             }
@@ -483,7 +500,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_5"
+                  "$ref" : "#/components/schemas/inline_response_200_7"
                 }
               }
             }
@@ -533,7 +550,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_6"
+                  "$ref" : "#/components/schemas/inline_response_200_8"
                 }
               }
             }
@@ -543,7 +560,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_2"
+                  "$ref" : "#/components/schemas/inline_response_400_3"
                 }
               }
             }
@@ -563,7 +580,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_7"
+                  "$ref" : "#/components/schemas/inline_response_200_9"
                 }
               }
             }
@@ -614,7 +631,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_3"
+                  "$ref" : "#/components/schemas/inline_response_400_4"
                 }
               }
             }
@@ -826,7 +843,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_7"
+                  "$ref" : "#/components/schemas/inline_response_200_9"
                 }
               }
             }
@@ -881,7 +898,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_7"
+                  "$ref" : "#/components/schemas/inline_response_200_9"
                 }
               }
             }
@@ -934,7 +951,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_3"
+                  "$ref" : "#/components/schemas/inline_response_400_4"
                 }
               }
             }
@@ -978,7 +995,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_7"
+                  "$ref" : "#/components/schemas/inline_response_200_10"
                 }
               }
             }
@@ -1183,7 +1200,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_8"
+                  "$ref" : "#/components/schemas/inline_response_200_11"
                 }
               }
             }
@@ -1234,7 +1251,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_3"
+                  "$ref" : "#/components/schemas/inline_response_400_4"
                 }
               }
             }
@@ -1278,7 +1295,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_9"
+                  "$ref" : "#/components/schemas/inline_response_200_12"
                 }
               }
             }
@@ -1316,16 +1333,24 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Successful operation"
-          },
-          "400" : {
-            "description" : "Invalid ID supplied"
-          },
-          "403" : {
-            "description" : "Forbidden Operation"
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_204"
+                }
+              }
+            }
           },
           "404" : {
-            "description" : "Showtime not found"
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404_2"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -1360,23 +1385,24 @@
         },
         "responses" : {
           "200" : {
-            "description" : "Successful operation",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Showtime"
+                  "$ref" : "#/components/schemas/inline_response_200_12"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Invalid ID supplied"
-          },
-          "403" : {
-            "description" : "Forbidden Operation"
-          },
           "404" : {
-            "description" : "Showtime not found"
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404_2"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -1426,19 +1452,20 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Showtime"
-                  }
+                  "$ref" : "#/components/schemas/inline_response_200_11"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "bad input parameter"
-          },
           "403" : {
-            "description" : "Forbidden Operation"
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_2"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -1518,22 +1545,29 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "search results matching criteria",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Movie"
-                  }
+                  "$ref" : "#/components/schemas/inline_response_200_13"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "bad input parameter"
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_2"
+                }
+              }
+            }
           }
-        }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
       }
     },
     "/cinema/{cinemaId}/movies" : {
@@ -1555,22 +1589,29 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "search results matching criteria",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Movie"
-                  }
+                  "$ref" : "#/components/schemas/inline_response_200_13"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "bad input parameter"
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_2"
+                }
+              }
+            }
           }
-        }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
       }
     },
     "/movies/{movieId}" : {
@@ -1607,33 +1648,43 @@
           "400" : {
             "description" : "bad input parameter"
           }
-        }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
       }
     },
     "/bookings" : {
       "get" : {
         "tags" : [ "Bookings" ],
         "summary" : "Searches user bookings",
-        "description" : "Get user bookings",
+        "description" : "Get user bookings. You must be logged in",
         "operationId" : "searchBooking",
         "responses" : {
           "200" : {
-            "description" : "search results matching criteria",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Movie"
-                  }
+                  "$ref" : "#/components/schemas/inline_response_200_14"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "bad input parameter"
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_2"
+                }
+              }
+            }
           }
-        }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
       },
       "post" : {
         "tags" : [ "Bookings" ],
@@ -1652,20 +1703,30 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "Successful operation",
+          "201" : {
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Booking"
+                  "$ref" : "#/components/schemas/inline_response_201_3"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Invalid input"
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
           }
-        }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
       }
     },
     "/bookings/{bookingId}" : {
@@ -1686,19 +1747,30 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "Successful operation"
-          },
-          "400" : {
-            "description" : "Invalid ID supplied"
-          },
-          "403" : {
-            "description" : "Forbidden Operation"
+          "204" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_204"
+                }
+              }
+            }
           },
           "404" : {
-            "description" : "Booking not found"
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404_2"
+                }
+              }
+            }
           }
-        }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
       }
     },
     "/ratings" : {
@@ -1723,13 +1795,20 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Rating"
+                  "$ref" : "#/components/schemas/inline_response_201_4"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Invalid input"
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -1760,16 +1839,20 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Rating"
-                  }
+                  "$ref" : "#/components/schemas/inline_response_200_15"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "ratingss not found"
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_2"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -1800,16 +1883,20 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/Rating"
-                  }
+                  "$ref" : "#/components/schemas/inline_response_200_15"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "ratingss not found"
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_403_2"
+                }
+              }
+            }
           }
         },
         "security" : [ {
@@ -1848,7 +1935,7 @@
             "format" : "url",
             "example" : "https://....."
           },
-          "booking" : {
+          "bookings" : {
             "type" : "array",
             "format" : "ObjectoId",
             "nullable" : true,
@@ -2168,37 +2255,6 @@
           }
         }
       },
-      "users_body" : {
-        "type" : "object",
-        "properties" : {
-          "firstName" : {
-            "type" : "string",
-            "example" : "Tom"
-          },
-          "lastName" : {
-            "type" : "string",
-            "example" : "Jones"
-          },
-          "mail" : {
-            "type" : "string",
-            "format" : "mail",
-            "example" : "tomjones@gmail.com"
-          },
-          "imageUrl" : {
-            "type" : "string",
-            "format" : "url",
-            "example" : "https://....."
-          },
-          "booking" : {
-            "type" : "array",
-            "format" : "ObjectoId",
-            "nullable" : true,
-            "items" : {
-              "$ref" : "#/components/schemas/Booking/properties/_id"
-            }
-          }
-        }
-      },
       "inline_response_200" : {
         "type" : "object",
         "properties" : {
@@ -2211,31 +2267,6 @@
           }
         }
       },
-      "owners_auth_body" : {
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "example" : "user@mail.com"
-          },
-          "password" : {
-            "type" : "string",
-            "example" : "pass1234"
-          }
-        }
-      },
-      "inline_response_200_1" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_1_data"
-          }
-        }
-      },
       "inline_response_400" : {
         "type" : "object",
         "properties" : {
@@ -2245,24 +2276,11 @@
           },
           "message" : {
             "type" : "string",
-            "example" : "Invalid email or password"
+            "example" : "Something went wrong"
           }
         }
       },
-      "inline_response_404" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "There is no owner with thar email"
-          }
-        }
-      },
-      "inline_response_200_2" : {
+      "inline_response_200_1" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2292,6 +2310,32 @@
           }
         }
       },
+      "inline_response_200_2" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_2_data"
+          }
+        }
+      },
+      "users_body" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "example" : "Tom Jones"
+          },
+          "imageUrl" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://....."
+          }
+        }
+      },
       "inline_response_200_3" : {
         "type" : "object",
         "properties" : {
@@ -2304,7 +2348,7 @@
           }
         }
       },
-      "owners_body" : {
+      "owners_auth_body" : {
         "type" : "object",
         "properties" : {
           "email" : {
@@ -2324,13 +2368,76 @@
             "type" : "string",
             "example" : "success"
           },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_4_data"
+          }
+        }
+      },
+      "inline_response_400_1" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Invalid email or password"
+          }
+        }
+      },
+      "inline_response_404" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "fail"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "There is no owner with thar email"
+          }
+        }
+      },
+      "inline_response_200_5" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_5_data"
+          }
+        }
+      },
+      "owners_body" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "example" : "user@mail.com"
+          },
+          "password" : {
+            "type" : "string",
+            "example" : "pass1234"
+          }
+        }
+      },
+      "inline_response_200_6" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
           "message" : {
             "type" : "string",
             "example" : "Confirmation email sent!"
           }
         }
       },
-      "inline_response_400_1" : {
+      "inline_response_400_2" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2380,7 +2487,7 @@
           }
         }
       },
-      "inline_response_200_5" : {
+      "inline_response_200_7" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2402,7 +2509,7 @@
           }
         }
       },
-      "inline_response_200_6" : {
+      "inline_response_200_8" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2415,7 +2522,7 @@
           }
         }
       },
-      "inline_response_400_2" : {
+      "inline_response_400_3" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2428,7 +2535,7 @@
           }
         }
       },
-      "inline_response_200_7" : {
+      "inline_response_200_9" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2440,7 +2547,7 @@
             "example" : 5
           },
           "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_7_data"
+            "$ref" : "#/components/schemas/inline_response_200_9_data"
           }
         }
       },
@@ -2475,7 +2582,7 @@
           }
         }
       },
-      "inline_response_400_3" : {
+      "inline_response_400_4" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2557,7 +2664,7 @@
           }
         }
       },
-      "inline_response_200_8" : {
+      "inline_response_200_10" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2569,7 +2676,23 @@
             "example" : 5
           },
           "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_8_data"
+            "$ref" : "#/components/schemas/inline_response_200_10_data"
+          }
+        }
+      },
+      "inline_response_200_11" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "results" : {
+            "type" : "number",
+            "example" : 5
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_11_data"
           }
         }
       },
@@ -2617,7 +2740,7 @@
           }
         }
       },
-      "inline_response_200_9" : {
+      "inline_response_200_12" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -2625,7 +2748,7 @@
             "example" : "success"
           },
           "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_8_data"
+            "$ref" : "#/components/schemas/inline_response_200_12_data"
           }
         }
       },
@@ -2639,6 +2762,38 @@
           "message" : {
             "type" : "string",
             "example" : "No document was found with that id"
+          }
+        }
+      },
+      "inline_response_200_13" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "results" : {
+            "type" : "number",
+            "example" : 5
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_13_data"
+          }
+        }
+      },
+      "inline_response_200_14" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "results" : {
+            "type" : "number",
+            "example" : 3
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_14_data"
           }
         }
       },
@@ -2661,23 +2816,29 @@
       "bookings_body" : {
         "type" : "object",
         "properties" : {
+          "user" : {
+            "$ref" : "#/components/schemas/User/properties/_id"
+          },
           "showtime" : {
-            "type" : "array",
-            "format" : "ObjectoId",
-            "items" : {
-              "$ref" : "#/components/schemas/Showtime/properties/_id"
-            }
+            "$ref" : "#/components/schemas/Showtime/properties/_id"
           },
           "seats" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/bookings_seats"
             }
+          }
+        }
+      },
+      "inline_response_201_3" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
           },
-          "total" : {
-            "type" : "number",
-            "format" : "float",
-            "example" : 49.99
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_201_3_data"
           }
         }
       },
@@ -2690,18 +2851,39 @@
             "type" : "number",
             "default" : 5
           },
-          "date" : {
-            "type" : "string",
-            "format" : "date"
-          },
           "comment" : {
             "type" : "string"
           },
           "movie" : {
             "$ref" : "#/components/schemas/Movie/properties/_id"
+          }
+        }
+      },
+      "inline_response_201_4" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
           },
-          "user" : {
-            "$ref" : "#/components/schemas/User/properties/_id"
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_201_4_data"
+          }
+        }
+      },
+      "inline_response_200_15" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "example" : "success"
+          },
+          "results" : {
+            "type" : "number",
+            "example" : 3
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/inline_response_200_15_data"
           }
         }
       },
@@ -2719,6 +2901,30 @@
         }
       },
       "inline_response_200_data" : {
+        "type" : "object",
+        "properties" : {
+          "user" : {
+            "$ref" : "#/components/schemas/User"
+          },
+          "accessToken" : {
+            "type" : "string",
+            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          },
+          "refreshToken" : {
+            "type" : "string",
+            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          }
+        }
+      },
+      "inline_response_200_2_data" : {
+        "type" : "object",
+        "properties" : {
+          "user" : {
+            "$ref" : "#/components/schemas/User"
+          }
+        }
+      },
+      "inline_response_200_3_data" : {
         "type" : "object",
         "properties" : {
           "_id" : {
@@ -2746,7 +2952,7 @@
           }
         }
       },
-      "inline_response_200_1_data" : {
+      "inline_response_200_4_data" : {
         "type" : "object",
         "properties" : {
           "owner" : {
@@ -2762,7 +2968,7 @@
           }
         }
       },
-      "inline_response_200_3_data" : {
+      "inline_response_200_5_data" : {
         "type" : "object",
         "properties" : {
           "owner" : {
@@ -2770,7 +2976,7 @@
           }
         }
       },
-      "inline_response_200_7_data" : {
+      "inline_response_200_9_data" : {
         "type" : "object",
         "properties" : {
           "cinemas" : {
@@ -2792,18 +2998,29 @@
       "inline_response_201_1_data" : {
         "type" : "object",
         "properties" : {
-          "cinema" : {
+          "theater" : {
             "$ref" : "#/components/schemas/Theater"
           }
         }
       },
-      "inline_response_200_8_data" : {
+      "inline_response_200_10_data" : {
         "type" : "object",
         "properties" : {
-          "cinemas" : {
+          "theaters" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/Theater"
+              "$ref" : "#/components/schemas/Cinema"
+            }
+          }
+        }
+      },
+      "inline_response_200_11_data" : {
+        "type" : "object",
+        "properties" : {
+          "showtimes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Showtime"
             }
           }
         }
@@ -2811,8 +3028,68 @@
       "inline_response_201_2_data" : {
         "type" : "object",
         "properties" : {
-          "cinema" : {
+          "showtime" : {
             "$ref" : "#/components/schemas/Showtime"
+          }
+        }
+      },
+      "inline_response_200_12_data" : {
+        "type" : "object",
+        "properties" : {
+          "showtime" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Showtime"
+            }
+          }
+        }
+      },
+      "inline_response_200_13_data" : {
+        "type" : "object",
+        "properties" : {
+          "movies" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Movie"
+            }
+          }
+        }
+      },
+      "inline_response_200_14_data" : {
+        "type" : "object",
+        "properties" : {
+          "bookings" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Booking"
+            }
+          }
+        }
+      },
+      "inline_response_201_3_data" : {
+        "type" : "object",
+        "properties" : {
+          "booking" : {
+            "$ref" : "#/components/schemas/Booking"
+          }
+        }
+      },
+      "inline_response_201_4_data" : {
+        "type" : "object",
+        "properties" : {
+          "rating" : {
+            "$ref" : "#/components/schemas/Rating"
+          }
+        }
+      },
+      "inline_response_200_15_data" : {
+        "type" : "object",
+        "properties" : {
+          "ratings" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Rating"
+            }
           }
         }
       }
