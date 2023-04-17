@@ -189,7 +189,7 @@
         "requestBody" : {
           "description" : "Update an existent user in the store",
           "content" : {
-            "application/json" : {
+            "x-www-form-urlencoded" : {
               "schema" : {
                 "$ref" : "#/components/schemas/users_body"
               }
@@ -445,7 +445,7 @@
         "requestBody" : {
           "description" : "Update an existent Owner. Can update one or more properties",
           "content" : {
-            "application/json" : {
+            "x-www-form-urlencoded" : {
               "schema" : {
                 "$ref" : "#/components/schemas/owners_body_1"
               }
@@ -776,7 +776,7 @@
         "requestBody" : {
           "description" : "Update an existent Cinema",
           "content" : {
-            "application/json" : {
+            "x-www-form-urlencoded" : {
               "schema" : {
                 "$ref" : "#/components/schemas/cinemas_cinemaId_body"
               }
@@ -1920,7 +1920,7 @@
             "type" : "string",
             "example" : "Tom Jones"
           },
-          "mail" : {
+          "email" : {
             "type" : "string",
             "format" : "mail",
             "example" : "tomjones@gmail.com"
@@ -1958,7 +1958,7 @@
             "type" : "string",
             "example" : "Elon"
           },
-          "mail" : {
+          "email" : {
             "type" : "string",
             "format" : "mail",
             "example" : "elon@gmail.com"
