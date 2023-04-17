@@ -39,17 +39,15 @@ exports.updateOne = Model =>
 exports.createOne = Model =>
     catchAsync(async (req, res, next) => {
         if (res.locals.user.role === 'owner') {
-            req.body = { ...req.body, ownerId: res.locals.user.id };
+            req.body = { ...req.body, owner: res.locals.user.id };
         } else {
-            req.body = { ...req.body, userId: res.locals.user.id };
+            req.body = { ...req.body, user: res.locals.user.id };
         }
 
         const newDoc = await Model.create(req.body);
         res.status(200).json({
             status: 'success',
-            data: {
-                newDoc,
-            },
+            data: newDoc,
         });
     });
 

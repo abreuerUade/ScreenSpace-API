@@ -3,6 +3,7 @@ const ownerController = require('../../controllers/ownerController');
 const cinemaController = require('../../controllers/cinemaController');
 const ownerAuthController = require('../../auth/ownerAuthController');
 const requireUser = require('../../middleware/requireUser');
+const { restrictTo } = require('../../middleware/restrictRole');
 
 router.post('/', ownerAuthController.signup);
 
@@ -13,7 +14,7 @@ router.post('/auth', ownerAuthController.login);
 router.post('/forgotPassword', ownerAuthController.forgotPassword);
 router.patch('/resetPassword/:token', ownerAuthController.resetPassword);
 
-router.use(requireUser);
+router.use(requireUser, restrictTo('owner'));
 
 router.delete('/auth', ownerAuthController.logout);
 

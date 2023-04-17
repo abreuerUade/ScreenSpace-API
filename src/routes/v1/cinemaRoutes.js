@@ -3,6 +3,7 @@ const cinemaController = require('../../controllers/cinemaController');
 const theaterController = require('../../controllers/theaterController');
 const showtimeController = require('../../controllers/showtimeController');
 const movieController = require('../../controllers/movieController');
+const { restrictTo } = require('../../middleware/restrictRole');
 const requireUser = require('../../middleware/requireUser');
 
 router.use(requireUser);
@@ -10,7 +11,27 @@ router.use(requireUser);
 router
     .route('/')
     .get(cinemaController.getAllCinemas)
-    .post(cinemaController.postCinema);
+    .post(restrictTo('owner'), cinemaController.postCinema);
+
+router.get(
+    '/cinemas-within/distance/:distance/latlng/:latlng',
+    restrictTo('user'),
+    cinemaController.getCinemasInRadius
+);
+
+router.get(
+    '/:cinemaId/movies/:movieId/showtimes',
+    restrictTo('user'),
+    showtimeController.cinemaMovieShowtimes
+);
+
+router.get(
+    '/:cinemaId/movies',
+    restrictTo('user'),
+    movieController.getMovieByCinema
+);
+
+router.use(restrictTo('owner'));
 
 router
     .route('/:id')
@@ -22,18 +43,6 @@ router
     )
     .delete(cinemaController.deleteCinema);
 
-router.get(
-    '/cinemas-within/distance/:distance/latlng/:latlng',
-    cinemaController.getCinemasInRadius
-);
-
 router.get('/:id/theaters', theaterController.getCinemaTheaters);
-
-router.get(
-    '/:cinemaId/movies/:movieId/showtimes',
-    showtimeController.cinemaMovieShowtimes
-);
-
-router.get('/:cinemaId/movies', movieController.getMovieByCinema);
 
 module.exports = router;

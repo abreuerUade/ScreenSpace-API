@@ -32,7 +32,7 @@ const cinemaSchema = new Schema({
     },
     theaters: [{ type: Schema.Types.ObjectId, default: [], ref: 'Theater' }],
     active: { type: Boolean, default: true },
-    ownerId: {
+    owner: {
         type: Schema.Types.ObjectId,
         select: false,
         ref: 'Owner',
@@ -48,7 +48,6 @@ const cinemaSchema = new Schema({
 //         `https://apis.datos.gob.ar/georef/api/direcciones?${addressString}`
 //     ).then(response => response.json());
 
-//     console.log(addressString);
 //     if (data.direcciones.length === 0) {
 //         return next(new AppError('Invalid Address', 400));
 //     }
@@ -72,7 +71,7 @@ const cinemaSchema = new Schema({
 // });
 
 cinemaSchema.post('save', async function (doc, next) {
-    const owner = await Owner.findById(doc.ownerId);
+    const owner = await Owner.findById(doc.owner);
 
     const newCinemas = [...owner.cinemas, this.id];
 

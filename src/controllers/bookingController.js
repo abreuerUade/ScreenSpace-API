@@ -1,11 +1,41 @@
 const factory = require('../controllers/handlerFactory');
 const Booking = require('../models/bookingModel');
+const catchAsync = require('../utils/catchAsync');
 
 const createBooking = factory.createOne(Booking);
 
-const getAllBookings = factory.getAll(Booking, 'showtime');
+const getAllBookings = catchAsync(async (req, res, next) => {
+    const bookings = await Booking.find({ user: res.locals.user.id }).populate({
+        path: 'showtime',
+        select: '-seats -__v',
+    });
+    // .find({ startTime: { $gt: new Date() } });
 
-const getBooking = factory.getOne(Booking, 'showtime');
+    res.status(200).json({
+        status: 'success',
+        results: bookings.length,
+        data: {
+            bookings,
+        },
+    });
+});
+
+const getBooking = catchAsync(async (req, res, next) => {
+    const booking = await Booking.findOne({
+        user: res.locals.user.id,
+        _id: req.params.id,
+    }).populate({
+        path: 'showtime',
+        select: '-seats -__v',
+    });
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            booking,
+        },
+    });
+});
 
 const updateBooking = factory.updateOne(Booking);
 

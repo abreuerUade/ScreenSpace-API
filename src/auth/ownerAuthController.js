@@ -174,7 +174,6 @@ const resetPassword = catchAsync(async (req, res, next) => {
 });
 
 const updatePassword = catchAsync(async (req, res, next) => {
-    // console.log(res.locals.user);
     const owner = await Owner.findById(res.locals.user.id).select('+password');
 
     if (!(await bcrypt.compare(req.body.currentPassword, owner.password))) {

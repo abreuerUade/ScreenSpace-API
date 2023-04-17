@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Showtime = require('../models/showtimeModel');
-const { forEach } = require('lodash');
+const User = require('../models/userModel');
 
 const Schema = mongoose.Schema;
 
@@ -14,8 +14,9 @@ const bookingSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Showtime',
         require: true,
+        autopopulate: false,
     },
-    seats: [{ row: Number, column: Number, taken: Boolean }],
+    seats: [{ row: Number, column: Number }],
     total: Number,
     active: {
         type: Boolean,
@@ -23,27 +24,22 @@ const bookingSchema = new Schema({
     },
 });
 
-bookingSchema.post(/^find/, async function (next) {
-    const now = new Date();
+bookingSchema.pre(/^find/, async function (next) {
+    console.log(this);
     this.find({
         active: { $ne: false },
-        'showtime.startTime': { $gt: now },
-    }).select();
-
-    console.log(now);
+    });
 });
 
 bookingSchema.pre('save', async function (next) {
     // Calcular precio
     const bookings = await this.populate('showtime');
-    console.log(bookings.showtime.price);
     this.total = bookings.showtime.price * bookings.seats.length;
 });
 
 bookingSchema.post('save', async function (doc, next) {
     // Modificar asientos disponilbes en funcion
     const showtime = await Showtime.findById(doc.showtime);
-    console.log(doc.seats.length);
     showtime.availableSeatsLeft =
         showtime.availableSeatsLeft - doc.seats.length;
     doc.seats.forEach(item => {
@@ -53,7 +49,12 @@ bookingSchema.post('save', async function (doc, next) {
         seat.taken = true;
     });
 
-    await showtime.save({ validateBeforeSave: false });
+    await showtime.save({ validateBeforeSave: true });
+
+    const user = await User.findById(doc.user);
+    const bookings = [...user.bookings, this.id];
+    user.bookings = bookings;
+    await user.save({ validateBeforeSave: false });
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);

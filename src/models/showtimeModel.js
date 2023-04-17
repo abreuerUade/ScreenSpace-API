@@ -24,6 +24,7 @@ const showtimeSchema = new Schema({
     },
     availableSeatsLeft: {
         type: Number,
+        min: [0, 'All seats are taken'],
     },
     seats: [{ row: Number, column: Number, taken: Boolean }],
     price: {
@@ -42,7 +43,6 @@ showtimeSchema.pre('save', async function (next) {
     const rows = theater.numberOfRows;
     const cols = theater.numberOfCols;
     this.cinema = theater.cinema;
-    console.log(this.startTime);
     this.startTime = new Date(this.startTime);
     if (this.seats.length === 0) {
         this.availableSeatsLeft = rows * cols;

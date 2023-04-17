@@ -1,5 +1,9 @@
 const router = require('express').Router();
 const bookingController = require('../../controllers/bookingController');
+const { restrictTo } = require('../../middleware/restrictRole');
+const requireUser = require('../../middleware/requireUser');
+
+router.use(requireUser, restrictTo('user'));
 
 router
     .route('/')

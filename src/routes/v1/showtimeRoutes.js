@@ -1,15 +1,19 @@
 const router = require('express').Router();
 const showtimeController = require('../../controllers/showtimeController');
+const { restrictTo } = require('../../middleware/restrictRole');
+const requireUser = require('../../middleware/requireUser');
+
+router.use(requireUser);
 
 router
     .route('/')
-    .post(showtimeController.createShowtime)
+    .post(restrictTo('owner'), showtimeController.createShowtime)
     .get(showtimeController.getAllShowtimes);
 
 router
     .route('/:id')
-    .patch(showtimeController.updateShowtime)
+    .patch(restrictTo('owner'), showtimeController.updateShowtime)
     .get(showtimeController.getShowtime)
-    .delete(showtimeController.deleteShowtime);
+    .delete(restrictTo('owner'), showtimeController.deleteShowtime);
 
 module.exports = router;

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Avengers: Endgame",
+        "genre": "Action",
+        "synopsis": "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to undo Thanos' actions and restore order to the universe.",
+        "imageUrl": "https://www.imdb.com/title/tt4154796/mediaviewer/rm4016896000/?ref_=tt_ov_i",
+        "premiered": true,
+        "premiereDate": "2019-04-26T00:00:00.000Z",
+        "duration": 181,
+        "director": "Anthony Russo, Joe Russo",
+        "actors": ["Robert Downey Jr.", "Chris Evans", "Mark Ruffalo"],
+        "avgRating": 8.4
+    },
+    {
+        "name": "Parasite",
+        "genre": "Drama",
+        "synopsis": "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
+        "imageUrl": "https://www.imdb.com/title/tt6751668/mediaviewer/rm3989005312/?ref_=tt_ov_i",
+        "premiered": true,
+        "premiereDate": "2019-05-21T00:00:00.000Z",
+        "duration": 132,
+        "director": "Bong Joon Ho",
+        "actors": ["Kang-ho Song", "Sun-kyun Lee", "Yeo-jeong Jo"],
+        "avgRating": 8.6
+    }
+]
