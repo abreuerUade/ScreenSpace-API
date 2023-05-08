@@ -25,7 +25,6 @@ const bookingSchema = new Schema({
 });
 
 bookingSchema.pre(/^find/, async function (next) {
-    console.log(this);
     this.find({
         active: { $ne: false },
     });

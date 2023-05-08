@@ -1,0 +1,145 @@
+doctype html
+html
+  head
+    meta(charset="UTF-8")
+    title Screen Space - Account Created
+    style(type="text/css").
+      body {
+        background-color: #f5f5f5;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #333;
+        padding: 20px;
+        margin: 0;
+        -webkit-text-size-adjust: none;
+        -ms-text-size-adjust: none;
+        max-width: 100%;
+        font-weight: normal;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      }
+
+      h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 0;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 20px;
+        text-align: justify;
+      }
+
+      .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      a.btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #337ab7;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 3px;
+      }
+
+      a.btn:hover {
+        background-color: #286090;
+      }
+
+      .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #999;
+        text-align: center;
+      }
+
+      .logo {
+        display: block;
+        margin: 0 auto;
+        max-width: 300px;
+      }
+
+      /* Gmail fixes */
+      /* Remove extra space added by Gmail before and after the email content */
+      /* Remove blue background color from the Gmail button */
+      /* Make sure the Gmail button is center aligned */
+      .u ~ div .btn-container {
+        padding: 0 !important;
+      }
+      .u ~ div .btn-container .btn {
+        background-color: #337ab7 !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+        display: block !important;
+        line-height: 1.5 !important;
+        font-weight: bold !important;
+        font-size: 16px !important;
+        border: none !important;
+        padding: 10px 20px !important;
+        border-radius: 3px !important;
+        color: #fff !important;
+        transition: background-color 0.3s ease-out !important;
+        -webkit-text-size-adjust: none !important;
+        -ms-text-size-adjust: none !important;
+        text-decoration: none !important;
+      }
+      .u ~ div .btn-container .btn:hover {
+        background-color: #286090 !important;
+        transition: background-color 0.3s ease-out !important;
+      }
+      /* Gmail fixes */
+      /* Remove extra space added by Gmail before and after the email content */
+      /* Remove blue background color from the Gmail button */
+      /* Make sure the Gmail button is center aligned */
+      .u ~ div .btn-container {
+        padding: 0 !important;
+      }
+      .u ~ div .btn-container .btn {
+        background-color: #337ab7 !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+        display: block !important;
+        line-height: 1.5 !important;
+        font-weight: bold !important;
+        font-size: 16px !important;
+        border: none !important;
+        padding: 10px 20px !important;
+        border-radius: 3px !important;
+        color: #fff !important;
+        transition: background-color 0.3s ease-out !important;
+        -webkit-text-size-adjust: none !important;
+        -ms-text-size-adjust: none !important;
+        text-decoration: none !important;
+      }
+      .u ~ div .btn-container .btn:hover {
+        background-color: #286090 !important;
+        transition: background-color 0.3s ease-out !important;
+      }
+
+  body
+    .container
+      img.logo(src=`http://localhost:3500/images/logo.png`, alt="Screen Space Logo")
+      h1 Your account has been successfully created
+      p Welcome to Screen Space! Your account has been successfully created. You can now start enjoying our services.
+      .btn-container
+        a.btn(href='#', role='button')
+      | Verify Your Email Address
+  p If you have any questions or need further assistance, please contact us at support@screenspace.com.
+  p Thank you for choosing Screen Space!
+  .footer
+    p This email was sent to #{email} because you recently created an account on Screen Space. If you did not create this account, please ignore this email.
+    p Screen Space, Inc. | 123 Main St. | Anytown, USA 12345

@@ -1,5 +1,6 @@
 // Dependencies
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -22,11 +23,13 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static('public'));
+
 app.use(cors());
 
 app.options('*', cors());
-
-app.use(express.static('public'));
 
 app.use(express.json({ limit: '10kb' }));
 
