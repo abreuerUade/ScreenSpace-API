@@ -4,8 +4,10 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const deserializeUser = require('./middleware/deserializeUser');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+
 const ownerRoutes = require('./routes/v1/ownerRoutes');
 const userRoutes = require('./routes/v1/userRoutes');
 const cinemaRoutes = require('./routes/v1/cinemaRoutes');
@@ -14,7 +16,7 @@ const movieRoutes = require('./routes/v1/movieRoutes');
 const showtimeRoutes = require('./routes/v1/showtimeRoutes');
 const bookingRoutes = require('./routes/v1/bookingRoutes');
 const ratingRoutes = require('./routes/v1/ratingRoutes');
-const deserializeUser = require('./middleware/deserializeUser');
+const viewsRoutes = require('./routes/v1/viewsRoutes');
 
 // App y middlewares
 const app = express();
@@ -25,7 +27,7 @@ if (process.env.NODE_ENV === 'development') {
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use(cors());
 
@@ -41,6 +43,7 @@ app.get('/api/v1/ping', (req, res) => {
 
 app.use(deserializeUser);
 
+app.use('/', viewsRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/owners', ownerRoutes);
 app.use('/api/v1/theaters', theaterRoutes);

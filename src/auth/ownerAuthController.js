@@ -9,7 +9,12 @@ const catchAsync = require('../utils/catchAsync');
 const { validatePassword } = require('../service/ownerService');
 
 const signup = catchAsync(async (req, res, next) => {
-    // Create new owner
+    const ownerExists = await Owner.findOne({ email: req.body.email });
+
+    if (ownerExists) {
+        return next(new AppError('User alredy exists', 400));
+    }
+
     const newOwner = await Owner.create({
         email: req.body.email,
         password: req.body.password,
@@ -55,16 +60,13 @@ const verifyEmail = catchAsync(async (req, res, next) => {
     owner.emailToken = undefined;
     owner.emailTokenExpires = undefined;
     await owner.save();
-
-    res.status(200).json({
-        status: 'Success',
-        owner,
-    });
+    // res.status(200).render('accountCreated');
+    res.status(200).render('accountCreated');
 });
 
 const login = catchAsync(async (req, res, next) => {
     let owner = await validatePassword(req.body.email, req.body.password);
-    if (!owner) {
+    if (!owner || !owner.isVerified) {
         return next(new AppError('Invalid email or password', 400));
     }
 
@@ -117,21 +119,26 @@ const logout = catchAsync(async (req, res) => {
 
 const forgotPassword = catchAsync(async (req, res, next) => {
     // get Owner on poster email
-    const owner = await Owner.findOne({ email: req.body.email });
+    const owner = await Owner.findOne({ email: req.body.email }).select(
+        '+password'
+    );
 
     if (!owner) {
         return next(new AppError('There is no owner with thar email', 404));
     }
 
+    // Generate random new password and updatre user
+    const tempPassword = crypto.randomBytes(8).toString('hex');
     // generate token
-    const token = owner.createEmailToken();
+    // const token = owner.createEmailToken();
+    owner.password = tempPassword;
     await owner.save({ validateBeforeSave: false });
-    const resetURL = `${req.protocol}://${req.get(
-        'host'
-    )}/api/v1/owners/resetPassword/${token}`;
+    // const resetURL = `${req.protocol}://${req.get(
+    //     'host'
+    // )}/api/v1/owners/resetPassword/${token}`;
 
     try {
-        await new Email(owner, resetURL).sendResetPassword();
+        await new Email(owner, tempPassword).sendResetPassword();
     } catch (error) {
         owner.emailToken = undefined;
         owner.emailTokenExpires = undefined;
@@ -142,36 +149,36 @@ const forgotPassword = catchAsync(async (req, res, next) => {
     res.status(200).json({
         status: 'success',
         message: 'Token sent to email!',
-        token, //Sacar
+        // token, //Sacar
     });
 });
 
-const resetPassword = catchAsync(async (req, res, next) => {
-    // 1- Get owner based token
-    const hashedToken = crypto
-        .createHash('sha256')
-        .update(req.params.token)
-        .digest('hex');
+// const resetPassword = catchAsync(async (req, res, next) => {
+//     // 1- Get owner based token
+//     const hashedToken = crypto
+//         .createHash('sha256')
+//         .update(req.params.token)
+//         .digest('hex');
 
-    const owner = await Owner.findOne({
-        emailToken: hashedToken,
-        emailTokenExpires: { $gt: Date.now() },
-    });
+//     const owner = await Owner.findOne({
+//         emailToken: hashedToken,
+//         emailTokenExpires: { $gt: Date.now() },
+//     });
 
-    if (!owner) {
-        return next(new AppError('Token expired or invalid', 400));
-    }
+//     if (!owner) {
+//         return next(new AppError('Token expired or invalid', 400));
+//     }
 
-    owner.password = req.body.password;
-    owner.emailToken = null;
-    owner.emailTokenExpires = null;
-    await owner.save({ validateBeforeSave: false });
+//     owner.password = req.body.password;
+//     owner.emailToken = null;
+//     owner.emailTokenExpires = null;
+//     await owner.save({ validateBeforeSave: false });
 
-    res.status(200).json({
-        status: 'success',
-        message: 'Password Updated',
-    });
-});
+//     res.status(200).json({
+//         status: 'success',
+//         message: 'Password Updated',
+//     });
+// });
 
 const updatePassword = catchAsync(async (req, res, next) => {
     const owner = await Owner.findById(res.locals.user.id).select('+password');
@@ -194,6 +201,6 @@ module.exports = {
     login,
     logout,
     forgotPassword,
-    resetPassword,
+    // resetPassword,
     updatePassword,
 };

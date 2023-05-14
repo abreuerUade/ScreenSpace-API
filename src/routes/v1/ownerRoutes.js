@@ -12,7 +12,7 @@ router.get('/confirmedEmail/:token', ownerAuthController.verifyEmail);
 router.post('/auth', ownerAuthController.login);
 
 router.post('/forgotPassword', ownerAuthController.forgotPassword);
-router.patch('/resetPassword/:token', ownerAuthController.resetPassword);
+// router.patch('/resetPassword/:token', ownerAuthController.resetPassword);
 
 router.use(requireUser, restrictTo('owner'));
 
