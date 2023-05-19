@@ -181,7 +181,9 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 // });
 
 const updatePassword = catchAsync(async (req, res, next) => {
-    const owner = await Owner.findById(res.locals.user.id).select('+password');
+    const owner = await Owner.findOne({ email: req.body.email }).select(
+        '+password'
+    );
 
     if (!(await bcrypt.compare(req.body.currentPassword, owner.password))) {
         return next(new AppError('Incorrect email or pass', 401));

@@ -14,11 +14,10 @@ router.post('/auth', ownerAuthController.login);
 router.post('/forgotPassword', ownerAuthController.forgotPassword);
 // router.patch('/resetPassword/:token', ownerAuthController.resetPassword);
 
+router.patch('/password', ownerAuthController.updatePassword);
 router.use(requireUser, restrictTo('owner'));
 
 router.delete('/auth', ownerAuthController.logout);
-
-router.patch('/password', ownerAuthController.updatePassword);
 
 router.get('/', ownerController.getMe, ownerController.getOwner);
 

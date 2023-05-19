@@ -2,9 +2,13 @@ const { signJwt } = require('../utils/jwt.utils');
 const Session = require('../models/sessionModel');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/userModel');
+const { verify } = require('../utils/googleVerify');
 
 const login = catchAsync(async (req, res, next) => {
-    let user = await User.findOne({ googleId: req.body.googleId });
+    //Google verivication
+    const payload = verify(req.body.token);
+
+    let user = await User.findOne({ googleId: payload['sub'] });
     if (!user) user = await User.create(req.body);
 
     const session = await Session.create({
