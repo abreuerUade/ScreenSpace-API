@@ -3,49 +3,58 @@ const Session = require('../models/sessionModel');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/userModel');
 const { verify } = require('../utils/googleVerify');
+const AppError = require('../utils/appError');
 
 const login = catchAsync(async (req, res, next) => {
     //Google verivication
     const payload = await verify(req.body.idToken);
 
-    // let user = await User.findOne({ googleId: payload['sub'] });
-    // if (!user) user = await User.create(req.body);
+    if (payload.statusCode === 400) {
+        return next(new AppError('Invalid idToken', 400));
+    }
 
-    // const session = await Session.create({
-    //     user: user._id,
-    //     userAgent: req.get('user-agent') || '',
-    //     userModel: 'User',
-    // });
+    let user = await User.findOne({ googleId: payload.sub });
+    if (!user) {
+        user = {
+            googleId: payload.sub,
+            email: payload.email,
+            name: payload.name,
+            photo: payload.picture,
+        };
+        user = await User.create(user);
+    }
 
-    // // create token
+    const session = await Session.create({
+        user: user._id,
+        userAgent: req.get('user-agent') || '',
+        userModel: 'User',
+    });
 
-    // const accessToken = signJwt(
-    //     {
-    //         id: user._id,
-    //         email: user.email,
-    //         role: user.role,
-    //         session: session._id,
-    //     },
-    //     {
-    //         expiresIn: process.env.JWT_ACCESS_EXPIRES,
-    //     }
-    // );
+    // create token
 
-    // // create refresh
-    // const refreshToken = signJwt(
-    //     { ...user, session: session._id },
-    //     {
-    //         expiresIn: process.env.JWT_REFRESH_EXPIRES,
-    //     }
-    // );
+    const accessToken = signJwt(
+        {
+            id: user._id,
+            email: user.email,
+            role: user.role,
+            session: session._id,
+        },
+        {
+            expiresIn: process.env.JWT_ACCESS_EXPIRES,
+        }
+    );
 
-    // res.status(200).json({
-    //     status: 'Success',
-    //     data: { user, accessToken, refreshToken },
-    // });
+    // create refresh
+    const refreshToken = signJwt(
+        { ...user, session: session._id },
+        {
+            expiresIn: process.env.JWT_REFRESH_EXPIRES,
+        }
+    );
+
     res.status(200).json({
         status: 'Success',
-        data: { payload },
+        data: { user, accessToken, refreshToken },
     });
 });
 

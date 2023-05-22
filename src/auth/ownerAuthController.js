@@ -100,7 +100,7 @@ const login = catchAsync(async (req, res, next) => {
     );
 
     res.status(200).json({
-        status: 'Success',
+        status: 'success',
         data: { owner, accessToken, refreshToken },
     });
 });
