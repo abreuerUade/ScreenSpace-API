@@ -6,42 +6,46 @@ const { verify } = require('../utils/googleVerify');
 
 const login = catchAsync(async (req, res, next) => {
     //Google verivication
-    const payload = verify(req.body.token);
+    const payload = await verify(req.body.idToken);
 
-    let user = await User.findOne({ googleId: payload['sub'] });
-    if (!user) user = await User.create(req.body);
+    // let user = await User.findOne({ googleId: payload['sub'] });
+    // if (!user) user = await User.create(req.body);
 
-    const session = await Session.create({
-        user: user._id,
-        userAgent: req.get('user-agent') || '',
-        userModel: 'User',
-    });
+    // const session = await Session.create({
+    //     user: user._id,
+    //     userAgent: req.get('user-agent') || '',
+    //     userModel: 'User',
+    // });
 
-    // create token
+    // // create token
 
-    const accessToken = signJwt(
-        {
-            id: user._id,
-            email: user.email,
-            role: user.role,
-            session: session._id,
-        },
-        {
-            expiresIn: process.env.JWT_ACCESS_EXPIRES,
-        }
-    );
+    // const accessToken = signJwt(
+    //     {
+    //         id: user._id,
+    //         email: user.email,
+    //         role: user.role,
+    //         session: session._id,
+    //     },
+    //     {
+    //         expiresIn: process.env.JWT_ACCESS_EXPIRES,
+    //     }
+    // );
 
-    // create refresh
-    const refreshToken = signJwt(
-        { ...user, session: session._id },
-        {
-            expiresIn: process.env.JWT_REFRESH_EXPIRES,
-        }
-    );
+    // // create refresh
+    // const refreshToken = signJwt(
+    //     { ...user, session: session._id },
+    //     {
+    //         expiresIn: process.env.JWT_REFRESH_EXPIRES,
+    //     }
+    // );
 
+    // res.status(200).json({
+    //     status: 'Success',
+    //     data: { user, accessToken, refreshToken },
+    // });
     res.status(200).json({
         status: 'Success',
-        data: { user, accessToken, refreshToken },
+        data: { payload },
     });
 });
 
