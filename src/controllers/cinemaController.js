@@ -29,7 +29,7 @@ const getOwnerCinemas = catchAsync(async (req, res, next) => {
     }
     const cinemas = await Cinema.find({ ownerId: req.params.ownerId });
     res.status(200).json({
-        status: 'Successfull',
+        status: 'success',
         results: cinemas.length,
         cinemas,
     });
@@ -57,7 +57,7 @@ const getCinemasInRadius = catchAsync(async (req, res, next) => {
     });
 
     res.status(200).json({
-        status: 'Successfull',
+        status: 'success',
         results: cinemas.length,
         cinemas,
     });

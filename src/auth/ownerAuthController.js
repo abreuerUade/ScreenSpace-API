@@ -31,7 +31,7 @@ const signup = catchAsync(async (req, res, next) => {
     await new Email(newOwner, confirmURL).sendVerifyEmail();
 
     res.status(200).json({
-        status: 'Success',
+        status: 'success',
         message: 'Confirmation sent to email!',
     });
 });

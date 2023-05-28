@@ -17,7 +17,7 @@ const ownerSchema = new Schema({
     },
     photo: {
         type: String,
-        default: 'default.jpg',
+        default: '/images/default.jpg',
     },
     email: {
         type: String,

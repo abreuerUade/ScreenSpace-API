@@ -66,11 +66,9 @@ const updateMe = catchAsync(async (req, res, next) => {
 });
 
 const deleteMe = catchAsync(async (req, res, next) => {
-    const user = await User.findByIdAndUpdate(res.locals.user.id, {
-        active: false,
-    });
+    const user = await User.findByIdAndDelete(res.locals.user.id);
 
-    res.status(204).json({
+    res.status(200).json({
         status: 'success',
         data: null,
     });
