@@ -13,7 +13,7 @@ const login = catchAsync(async (req, res, next) => {
         return next(new AppError('Invalid idToken', 400));
     }
 
-    let user = await User.findOne({ googleId: payload.sub });
+    let user = await User.findOne({ googleId: payload.sub }).select('+role');
     if (!user) {
         user = {
             googleId: payload.sub,
