@@ -43,7 +43,7 @@ exports.createOne = Model =>
         } else {
             req.body = { ...req.body, user: res.locals.user.id };
         }
-        if (req.file) req.body.photo = `/images/cinemas/req.file.filename`;
+        if (req.file) req.body.photo = `/images/cinemas/${req.file.filename}`;
         const newDoc = await Model.create(req.body);
         res.status(200).json({
             status: 'success',

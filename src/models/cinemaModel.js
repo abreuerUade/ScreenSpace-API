@@ -15,11 +15,12 @@ const cinemaSchema = new Schema({
     photo: { type: String },
     address: {
         street: { type: String },
-        number: { type: Number },
+        number: { type: String },
         county: { type: String },
         city: { type: String },
         state: { type: String },
         country: { type: String },
+        postalCode: { type: String },
     },
     location: {
         // GeoJSON

@@ -11,7 +11,12 @@ router.use(requireUser);
 router
     .route('/')
     .get(cinemaController.getAllCinemas)
-    .post(restrictTo('owner'), cinemaController.postCinema);
+    .post(
+        restrictTo('owner'),
+        cinemaController.uploadCinemaPhoto,
+        cinemaController.resizeCinemaPhoto,
+        cinemaController.postCinema
+    );
 
 router.get(
     '/cinemas-within/distance/:distance/latlng/:latlng',
