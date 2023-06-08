@@ -27,7 +27,7 @@ const getOwnerCinemas = catchAsync(async (req, res, next) => {
             new AppError('You are not allowed to get these cinemas', 403)
         );
     }
-    const cinemas = await Cinema.find({ ownerId: req.params.ownerId });
+    const cinemas = await Cinema.find({ owner: req.params.ownerId });
     res.status(200).json({
         status: 'success',
         results: cinemas.length,

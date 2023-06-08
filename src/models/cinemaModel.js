@@ -29,7 +29,10 @@ const cinemaSchema = new Schema({
             default: 'Point',
             enum: ['Point'],
         },
-        coordinates: [Number],
+        coordinates: {
+            type: [Number],
+            default: [0, 0],
+        },
     },
     theaters: [{ type: Schema.Types.ObjectId, default: [], ref: 'Theater' }],
     active: { type: Boolean, default: true },
