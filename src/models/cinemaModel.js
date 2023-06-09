@@ -86,7 +86,7 @@ cinemaSchema.post('save', async function (doc, next) {
 });
 cinemaSchema.pre(/^find/, function (next) {
     // La regex es para q funcione para todos los find
-    this.find({ active: { $ne: false } });
+    // this.find({ active: { $ne: false } });
     next();
 });
 
