@@ -33,6 +33,20 @@ const cinemaMovieShowtimes = catchAsync(async (req, res, next) => {
     });
 });
 
+const getShowtimesByTheater = catchAsync(async (req, res, next) => {
+    const showtimes = await Showtime.find({
+        theater: req.params.id,
+    }).populate('movie');
+
+    res.status(200).json({
+        status: 'success',
+        results: showtimes.length,
+        data: {
+            showtimes,
+        },
+    });
+});
+
 module.exports = {
     createShowtime,
     getShowtime,
@@ -40,4 +54,5 @@ module.exports = {
     updateShowtime,
     deleteShowtime,
     cinemaMovieShowtimes,
+    getShowtimesByTheater,
 };

@@ -16,4 +16,6 @@ router
     .get(showtimeController.getShowtime)
     .delete(restrictTo('owner'), showtimeController.deleteShowtime);
 
+router.get('/showtimesByTheater/:id', showtimeController.getShowtimesByTheater);
+
 module.exports = router;

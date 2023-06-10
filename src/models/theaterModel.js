@@ -30,7 +30,7 @@ const theaterSchema = new Schema({
         default: true,
     },
 });
-theaterSchema.index({ theaterNumber: 1, cinema: 1 }, { unique: true });
+theaterSchema.index({ theaterName: 1, cinema: 1 }, { unique: true });
 
 // theaterSchema.pre(/^find/, async function (next) {
 //     this.find({ active: { $ne: false } });
