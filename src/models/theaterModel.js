@@ -4,8 +4,8 @@ const Cinema = require('./cinemaModel');
 const Schema = mongoose.Schema;
 
 const theaterSchema = new Schema({
-    theaterNumber: {
-        type: Number,
+    theaterName: {
+        type: String,
         required: true,
         // unique: true,
     },

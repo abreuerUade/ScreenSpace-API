@@ -38,7 +38,7 @@ const cinemaSchema = new Schema({
     active: { type: Boolean, default: true },
     owner: {
         type: Schema.Types.ObjectId,
-        select: false,
+        // select: false,
         ref: 'Owner',
     },
 });
@@ -84,9 +84,21 @@ cinemaSchema.post('save', async function (doc, next) {
 
     next();
 });
-cinemaSchema.pre(/^find/, function (next) {
-    // La regex es para q funcione para todos los find
-    // this.find({ active: { $ne: false } });
+// cinemaSchema.pre(/^find/, function (next) {
+//     // La regex es para q funcione para todos los find
+//     // this.find({ active: { $ne: false } });
+//     next();/elete$/
+// });
+
+cinemaSchema.post(/elete$/, async function (doc, next) {
+    const owner = await Owner.findById(doc.owner);
+
+    const cinemas = owner.cinemas.filter(
+        cinema => JSON.stringify(cinema) !== JSON.stringify(doc.id)
+    );
+
+    owner.cinemas = cinemas;
+    await owner.save({ validateBeforeSave: false });
     next();
 });
 
