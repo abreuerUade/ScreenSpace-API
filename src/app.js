@@ -38,7 +38,9 @@ app.use(express.json({ limit: '10kb' }));
 // Routes
 
 app.get('/api/v1/ping', (req, res) => {
-    res.status(200).json({ status: 'API working corrctly' });
+    res.status(200).json({
+        status: 'API working corrctly - CHEERS FROM DOCKER!!',
+    });
 });
 
 app.use(deserializeUser);
