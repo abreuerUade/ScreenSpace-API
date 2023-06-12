@@ -39,7 +39,7 @@ app.use(express.json({ limit: '10kb' }));
 
 app.get('/api/v1/ping', (req, res) => {
     res.status(200).json({
-        status: 'API working corrctly - CHEERS FROM DOCKER!!',
+        status: 'API working corrctly!!! 🤓',
     });
 });
 

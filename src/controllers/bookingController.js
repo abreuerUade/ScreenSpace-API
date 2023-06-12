@@ -5,11 +5,14 @@ const catchAsync = require('../utils/catchAsync');
 const createBooking = factory.createOne(Booking);
 
 const getAllBookings = catchAsync(async (req, res, next) => {
-    const bookings = await Booking.find({ user: res.locals.user.id }).populate({
-        path: 'showtime',
-        select: '-seats -__v',
+    const allBookings = await Booking.find({
+        user: res.locals.user.id,
+    }).populate('showtime', '-seats -__v');
+
+    console.log(allBookings);
+    const bookings = allBookings.filter(booking => {
+        return Date.parse(booking.showtime.startTime) > new Date();
     });
-    // .find({ startTime: { $gt: new Date() } });
 
     res.status(200).json({
         status: 'success',

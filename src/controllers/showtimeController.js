@@ -1,8 +1,31 @@
 const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const Showtime = require('../models/showtimeModel');
+const Movie = require('../models/movieModel');
+const AppError = require('../utils/appError');
 
-const createShowtime = factory.createOne(Showtime);
+const createShowtime = catchAsync(async (req, res, next) => {
+    req.body = { ...req.body, owner: res.locals.user.id };
+
+    const movie = await Movie.findById(req.body.movie);
+
+    if (Date.parse(req.body.startTime) < Date.parse(movie.premiereDate)) {
+        next(
+            new AppError('The showtime cannot be before the premiere date', 400)
+        );
+    }
+
+    const newShowtime = await Showtime.create(req.body);
+
+    const showtime = await Showtime.findById(newShowtime._id).populate('movie');
+
+    res.status(201).json({
+        status: 'success',
+        data: {
+            showtime,
+        },
+    });
+});
 
 const getShowtime = factory.getOne(Showtime, ['theater', 'movie', 'cinema']);
 
