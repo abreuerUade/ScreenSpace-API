@@ -43,6 +43,11 @@ app.get('/api/v1/ping', (req, res) => {
         status: 'API working corrctly!!!',
     });
 });
+app.get('/', (req, res) => {
+    res.status(200).json({
+        status: 'Welcome to ScreenSpace API',
+    });
+});
 
 app.use(deserializeUser);
 
