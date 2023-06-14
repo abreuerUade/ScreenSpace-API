@@ -4,6 +4,8 @@ const factory = require('./handlerFactory');
 const upload = require('../utils/multerConfig');
 const sharp = require('sharp');
 const AppError = require('../utils/appError');
+const Theater = require('../models/theaterModel');
+const Showtime = require('../models/showtimeModel');
 
 const uploadCinemaPhoto = upload.single('photo');
 
@@ -72,7 +74,24 @@ const postCinema = factory.createOne(Cinema);
 
 const updateCinema = factory.updateOne(Cinema);
 
-const deleteCinema = factory.deleteOne(Cinema);
+const deleteCinema = catchAsync(async (req, res, next) => {
+    const cinema = await Cinema.findById(req.params.id);
+
+    if (!cinema) {
+        return next(new AppError('No cinema found with that ID', 404));
+    }
+
+    cinema.theaters.forEach(async item => {
+        await Showtime.deleteMany({ theater: item });
+    });
+    await Theater.deleteMany({ cinema: req.params.id });
+    await Cinema.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+        status: 'success',
+        data: null,
+    });
+});
 
 module.exports = {
     uploadCinemaPhoto,

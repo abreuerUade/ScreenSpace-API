@@ -28,6 +28,7 @@ if (process.env.NODE_ENV === 'development') {
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use('/favicon.ico', (req, res, next) => res.status(204).end());
 
 app.use(cors());
 
@@ -39,7 +40,7 @@ app.use(express.json({ limit: '10kb' }));
 
 app.get('/api/v1/ping', (req, res) => {
     res.status(200).json({
-        status: 'API working corrctly!!! 🤓',
+        status: 'API working corrctly!!!',
     });
 });
 
