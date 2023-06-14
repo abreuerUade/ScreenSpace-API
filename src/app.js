@@ -46,7 +46,6 @@ app.get('/api/v1/ping', (req, res) => {
 
 app.use(deserializeUser);
 
-app.use('/', viewsRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/owners', ownerRoutes);
 app.use('/api/v1/theaters', theaterRoutes);
