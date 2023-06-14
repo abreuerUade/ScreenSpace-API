@@ -42,11 +42,11 @@ app.use(express.json({ limit: '10kb' }));
 
 // app.use(helmet());
 
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 // app.use(xss());
 
-app.use(compression());
+// app.use(compression());
 
 // Routes
 
