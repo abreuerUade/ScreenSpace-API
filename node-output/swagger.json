@@ -1,14 +1,10 @@
 {
   "openapi" : "3.0.0",
   "info" : {
-    "title" : "ScreenSpace",
+    "title" : "ScreenSpace API",
     "description" : "This is a non commercial project for a software engineering degree. It´s a REST API for cinema management and movie ticket booking mobile app.",
     "contact" : {
       "email" : "contact@screenspace.com"
-    },
-    "license" : {
-      "name" : "Apache 2.0",
-      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
     "version" : "1.0.0"
   },
@@ -16,8 +12,11 @@
     "url" : "https://virtserver.swaggerhub.com/BREUERANDRES/ScreenSpace-API/1.0.0",
     "description" : "SwaggerHub API Auto Mocking"
   }, {
-    "url" : "http://localhost:3500/api/v1",
+    "url" : "https://screenspaceapi.azurewebsites.net//api/v1",
     "description" : "Developement URL"
+  }, {
+    "url" : "https://screenspace-api.azurewebsites.net/api/v1",
+    "description" : "Production URL"
   } ],
   "tags" : [ {
     "name" : "Health Check",
@@ -2234,24 +2233,9 @@
       "users_auth_body" : {
         "type" : "object",
         "properties" : {
-          "name" : {
+          "token" : {
             "type" : "string",
-            "example" : "Tom Jones"
-          },
-          "mail" : {
-            "type" : "string",
-            "format" : "mail",
-            "example" : "tomjones@gmail.com"
-          },
-          "googleId" : {
-            "type" : "string",
-            "format" : "googleId",
-            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ"
-          },
-          "photo" : {
-            "type" : "string",
-            "format" : "url",
-            "example" : "https://....."
+            "example" : "987234ac059826d3045f67"
           }
         }
       },
