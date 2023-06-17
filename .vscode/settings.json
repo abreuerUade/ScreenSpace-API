@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/ad581185-8355-4283-99ef-166e12994f37/resourceGroups/appsvc_linux_centralus_basic/providers/Microsoft.Web/sites/screenspace-api",
+    "appService.deploySubpath": "."
+}

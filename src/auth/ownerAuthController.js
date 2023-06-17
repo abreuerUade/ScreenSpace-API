@@ -20,7 +20,7 @@ const signup = catchAsync(async (req, res, next) => {
         password: req.body.password,
     });
     // Create hashed token
-    const token = newOwner.createEmailToken();
+    const token = await newOwner.createEmailToken();
     await newOwner.save({ validateBeforeSave: false });
 
     // Send confirm mail
