@@ -1,12 +1,11 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "ScreenSpace",
+        "title": "ScreenSpace API",
         "description": "This is a non commercial project for a software engineering degree. It´s a REST API for cinema management and movie ticket booking mobile app.",
         "contact": {
             "email": "contact@screenspace.com"
         },
-
         "version": "1.0.0"
     },
     "servers": [
@@ -15,7 +14,7 @@
             "description": "SwaggerHub API Auto Mocking"
         },
         {
-            "url": "http://localhost:3500/api/v1",
+            "url": "https://screenspaceapi.azurewebsites.net//api/v1",
             "description": "Developement URL"
         },
         {
@@ -49,7 +48,7 @@
             "description": "Operations available only to cinema owners"
         },
         {
-            "name": "movies",
+            "name": "Movies",
             "description": "Operations available only to cinema owners"
         },
         {
@@ -70,7 +69,7 @@
                     "200": {
                         "description": "API working correctly"
                     },
-                    "404": {
+                    "500": {
                         "description": "Server not found"
                     }
                 }
@@ -1579,7 +1578,7 @@
         },
         "/movies": {
             "get": {
-                "tags": ["movies"],
+                "tags": ["Movies"],
                 "summary": "Searches all movies",
                 "description": "Search movies with query parameters",
                 "operationId": "searchmovies",
@@ -1685,7 +1684,7 @@
         },
         "/cinema/{cinemaId}/movies": {
             "get": {
-                "tags": ["movies"],
+                "tags": ["Movies"],
                 "summary": "Searches all movies",
                 "description": "Search movies with query parameters",
                 "operationId": "cinemamovies",
@@ -1733,7 +1732,7 @@
         },
         "/movies/{movieId}": {
             "get": {
-                "tags": ["movies"],
+                "tags": ["Movies"],
                 "summary": "Searches movie By Id",
                 "description": "By passing in the appropriate options, you can search for available inventory in the system",
                 "operationId": "searchmovieById",
@@ -2400,24 +2399,9 @@
             "users_auth_body": {
                 "type": "object",
                 "properties": {
-                    "name": {
+                    "token": {
                         "type": "string",
-                        "example": "Tom Jones"
-                    },
-                    "mail": {
-                        "type": "string",
-                        "format": "mail",
-                        "example": "tomjones@gmail.com"
-                    },
-                    "googleId": {
-                        "type": "string",
-                        "format": "googleId",
-                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ"
-                    },
-                    "photo": {
-                        "type": "string",
-                        "format": "url",
-                        "example": "https://....."
+                        "example": "987234ac059826d3045f67"
                     }
                 }
             },
