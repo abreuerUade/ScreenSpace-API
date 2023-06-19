@@ -37,7 +37,7 @@
     "name" : "Showtimes",
     "description" : "Operations available only to cinema owners"
   }, {
-    "name" : "movies",
+    "name" : "Movies",
     "description" : "Operations available only to cinema owners"
   }, {
     "name" : "Bookings",
@@ -55,7 +55,7 @@
           "200" : {
             "description" : "API working correctly"
           },
-          "404" : {
+          "500" : {
             "description" : "Server not found"
           }
         }
@@ -1474,7 +1474,7 @@
     },
     "/movies" : {
       "get" : {
-        "tags" : [ "movies" ],
+        "tags" : [ "Movies" ],
         "summary" : "Searches all movies",
         "description" : "Search movies with query parameters",
         "operationId" : "searchmovies",
@@ -1571,7 +1571,7 @@
     },
     "/cinema/{cinemaId}/movies" : {
       "get" : {
-        "tags" : [ "movies" ],
+        "tags" : [ "Movies" ],
         "summary" : "Searches all movies",
         "description" : "Search movies with query parameters",
         "operationId" : "cinemamovies",
@@ -1615,7 +1615,7 @@
     },
     "/movies/{movieId}" : {
       "get" : {
-        "tags" : [ "movies" ],
+        "tags" : [ "Movies" ],
         "summary" : "Searches movie By Id",
         "description" : "By passing in the appropriate options, you can search for available inventory in the system",
         "operationId" : "searchmovieById",
