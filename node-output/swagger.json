@@ -1,23 +1,23 @@
 {
   "openapi" : "3.0.0",
+  "servers" : [ {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/BREUERANDRES/ScreenSpace-API/1.0.0"
+  }, {
+    "description" : "Developement URL",
+    "url" : "https://screenspaceapi.azurewebsites.net//api/v1"
+  }, {
+    "description" : "Production URL",
+    "url" : "https://screenspace-api.azurewebsites.net/api/v1"
+  } ],
   "info" : {
-    "title" : "ScreenSpace API",
     "description" : "This is a non commercial project for a software engineering degree. It´s a REST API for cinema management and movie ticket booking mobile app.",
+    "version" : "1.0.0",
+    "title" : "ScreenSpace API",
     "contact" : {
       "email" : "contact@screenspace.com"
-    },
-    "version" : "1.0.0"
+    }
   },
-  "servers" : [ {
-    "url" : "https://virtserver.swaggerhub.com/BREUERANDRES/ScreenSpace-API/1.0.0",
-    "description" : "SwaggerHub API Auto Mocking"
-  }, {
-    "url" : "https://screenspaceapi.azurewebsites.net//api/v1",
-    "description" : "Developement URL"
-  }, {
-    "url" : "https://screenspace-api.azurewebsites.net/api/v1",
-    "description" : "Production URL"
-  } ],
   "tags" : [ {
     "name" : "Health Check",
     "description" : "Operation available to regular developers"
@@ -71,7 +71,13 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/users_auth_body"
+                "type" : "object",
+                "properties" : {
+                  "token" : {
+                    "type" : "string",
+                    "example" : "987234ac059826d3045f67"
+                  }
+                }
               }
             }
           }
@@ -82,7 +88,29 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "user" : {
+                          "$ref" : "#/components/schemas/User"
+                        },
+                        "accessToken" : {
+                          "type" : "string",
+                          "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        },
+                        "refreshToken" : {
+                          "type" : "string",
+                          "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -92,7 +120,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Something went wrong"
+                    }
+                  }
                 }
               }
             }
@@ -101,6 +139,9 @@
       },
       "delete" : {
         "tags" : [ "Users" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Log Out",
         "description" : "This can only be done by the logged in owner.",
         "operationId" : "logoutUser",
@@ -110,7 +151,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "accessToken" : {
+                      "type" : "string",
+                      "example" : "null"
+                    },
+                    "refreshToken" : {
+                      "type" : "string",
+                      "example" : "null"
+                    }
+                  }
                 }
               }
             }
@@ -120,30 +175,54 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/users/" : {
       "get" : {
         "tags" : [ "Users" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Get logged user data",
-        "description" : "By passing in the appropriate options, you can search for available specific user",
         "operationId" : "searchUserById",
+        "description" : "By passing in the appropriate options, you can search for available specific user",
         "responses" : {
           "200" : {
             "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "user" : {
+                          "$ref" : "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -151,13 +230,89 @@
           "400" : {
             "description" : "bad input parameter"
           }
-        },
+        }
+      },
+      "patch" : {
+        "tags" : [ "Users" ],
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
+        } ],
+        "summary" : "Update logged user",
+        "description" : "This can only be done by the logged in user.",
+        "operationId" : "updateUser",
+        "requestBody" : {
+          "description" : "Update an existent user in the store",
+          "content" : {
+            "x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "name" : {
+                    "type" : "string",
+                    "example" : "Tom Jones"
+                  },
+                  "imageUrl" : {
+                    "type" : "string",
+                    "format" : "url",
+                    "example" : "https://....."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "user" : {
+                          "$ref" : "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "delete" : {
         "tags" : [ "Users" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Delete logged user",
         "description" : "This can only be done by the logged in user.",
         "operationId" : "deleteUser",
@@ -170,56 +325,22 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Users" ],
-        "summary" : "Update logged user",
-        "description" : "This can only be done by the logged in user.",
-        "operationId" : "updateUser",
-        "requestBody" : {
-          "description" : "Update an existent user in the store",
-          "content" : {
-            "x-www-form-urlencoded" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/users_body"
-              }
-            }
-          }
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_2"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Invalid Credentials",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/owners/confirmedEmail/{token}" : {
@@ -232,8 +353,6 @@
           "in" : "path",
           "description" : "Hashed token. The email has the token.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -244,7 +363,41 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_3"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "_id" : {
+                          "type" : "string",
+                          "example" : "d290f1ee6c544b0190e6d701748f0851"
+                        },
+                        "name" : {
+                          "type" : "string",
+                          "example" : ""
+                        },
+                        "mail" : {
+                          "type" : "string",
+                          "example" : "example@mail.com"
+                        },
+                        "photo" : {
+                          "type" : "string",
+                          "example" : "public/owners/images/default.png"
+                        },
+                        "cinemas" : {
+                          "type" : "array",
+                          "example" : [ ],
+                          "items" : {
+                            "$ref" : "#/components/schemas/Cinema"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -265,7 +418,17 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/owners_auth_body"
+                "type" : "object",
+                "properties" : {
+                  "email" : {
+                    "type" : "string",
+                    "example" : "user@mail.com"
+                  },
+                  "password" : {
+                    "type" : "string",
+                    "example" : "pass1234"
+                  }
+                }
               }
             }
           }
@@ -276,7 +439,29 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_4"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "owner" : {
+                          "$ref" : "#/components/schemas/Owner"
+                        },
+                        "accessToken" : {
+                          "type" : "string",
+                          "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        },
+                        "refreshToken" : {
+                          "type" : "string",
+                          "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -286,7 +471,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Invalid email or password"
+                    }
+                  }
                 }
               }
             }
@@ -296,7 +491,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "There is no owner with thar email"
+                    }
+                  }
                 }
               }
             }
@@ -305,6 +510,9 @@
       },
       "delete" : {
         "tags" : [ "Owners" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Log Out",
         "description" : "Session is changed to invalid.",
         "operationId" : "logoutOwner",
@@ -314,7 +522,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "accessToken" : {
+                      "type" : "string",
+                      "example" : "null"
+                    },
+                    "refreshToken" : {
+                      "type" : "string",
+                      "example" : "null"
+                    }
+                  }
                 }
               }
             }
@@ -324,49 +546,25 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/owners" : {
-      "get" : {
-        "tags" : [ "Owners" ],
-        "summary" : "Get logged owners data",
-        "description" : "Gets owners personal information. Must be logged in.",
-        "operationId" : "getOwner",
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_5"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Invalid Credentials",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
       "post" : {
         "tags" : [ "Owners" ],
         "summary" : "Sign Up",
@@ -377,7 +575,17 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/owners_body"
+                "type" : "object",
+                "properties" : {
+                  "email" : {
+                    "type" : "string",
+                    "example" : "user@mail.com"
+                  },
+                  "password" : {
+                    "type" : "string",
+                    "example" : "pass1234"
+                  }
+                }
               }
             }
           }
@@ -388,7 +596,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_6"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Confirmation email sent!"
+                    }
+                  }
                 }
               }
             }
@@ -398,25 +616,52 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Enter a valid email"
+                    }
+                  }
                 }
               }
             }
           }
         }
       },
-      "delete" : {
+      "get" : {
         "tags" : [ "Owners" ],
-        "summary" : "Delete logged Owner",
-        "description" : "Owner is modified to inactive.",
-        "operationId" : "deleteOwner",
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Get logged owners data",
+        "operationId" : "getOwner",
+        "description" : "Gets owners personal information. Must be logged in.",
         "responses" : {
-          "204" : {
-            "description" : "Successful operation",
+          "200" : {
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_204"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "owner" : {
+                          "$ref" : "#/components/schemas/Owner"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -426,18 +671,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       },
       "patch" : {
         "tags" : [ "Owners" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Update logged Owner",
         "description" : "This can only be done by the logged in owner.",
         "operationId" : "updateOwner",
@@ -446,7 +701,23 @@
           "content" : {
             "x-www-form-urlencoded" : {
               "schema" : {
-                "$ref" : "#/components/schemas/owners_body_1"
+                "type" : "object",
+                "properties" : {
+                  "name" : {
+                    "type" : "string",
+                    "example" : "Tom"
+                  },
+                  "mail" : {
+                    "type" : "string",
+                    "format" : "mail",
+                    "example" : "tomjones@gmail.com"
+                  },
+                  "imageUrl" : {
+                    "type" : "string",
+                    "format" : "url",
+                    "example" : "https://....."
+                  }
+                }
               }
             }
           }
@@ -457,7 +728,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_5"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "owner" : {
+                          "$ref" : "#/components/schemas/Owner"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -467,15 +752,69 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
+        }
+      },
+      "delete" : {
+        "tags" : [ "Owners" ],
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
+        } ],
+        "summary" : "Delete logged Owner",
+        "description" : "Owner is modified to inactive.",
+        "operationId" : "deleteOwner",
+        "responses" : {
+          "204" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/owners/forgotPassword" : {
@@ -488,7 +827,13 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/owners_forgotPassword_body"
+                "type" : "object",
+                "properties" : {
+                  "email" : {
+                    "type" : "string",
+                    "example" : "user@mail.com"
+                  }
+                }
               }
             }
           }
@@ -499,7 +844,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_7"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Password recovery email sent!"
+                    }
+                  }
                 }
               }
             }
@@ -509,7 +864,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "There is no owner with thar email"
+                    }
+                  }
                 }
               }
             }
@@ -528,8 +893,6 @@
           "in" : "path",
           "description" : "Hashed token.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -538,7 +901,13 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/resetPassword_token_body"
+                "type" : "object",
+                "properties" : {
+                  "password" : {
+                    "type" : "string",
+                    "example" : "newPassword1234"
+                  }
+                }
               }
             }
           }
@@ -549,7 +918,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_8"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Password Updated"
+                    }
+                  }
                 }
               }
             }
@@ -559,7 +938,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_3"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Token expired or invalid"
+                    }
+                  }
                 }
               }
             }
@@ -568,39 +957,11 @@
       }
     },
     "/cinemas" : {
-      "get" : {
-        "tags" : [ "Cinemas" ],
-        "summary" : "Searches all cinemas",
-        "description" : "Searches all cinemas",
-        "operationId" : "searchCinema",
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_9"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Invalid Credentials",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
       "post" : {
         "tags" : [ "Cinemas" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Create new cinema",
         "description" : "Create new cinema. Must be done by a logged owner",
         "operationId" : "addCinema",
@@ -609,7 +970,24 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/cinemas_body"
+                "type" : "object",
+                "properties" : {
+                  "company" : {
+                    "type" : "string",
+                    "example" : "Hoyts"
+                  },
+                  "name" : {
+                    "type" : "string",
+                    "example" : "Hoyts Abasto"
+                  },
+                  "address" : {
+                    "$ref" : "#/components/schemas/Address"
+                  },
+                  "price" : {
+                    "type" : "integer",
+                    "example" : "23.99"
+                  }
+                }
               }
             }
           }
@@ -620,7 +998,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "cinema" : {
+                          "$ref" : "#/components/schemas/Cinema"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -630,7 +1022,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_4"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Duplicate key error"
+                    }
+                  }
                 }
               }
             }
@@ -640,30 +1042,100 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
+        }
+      },
+      "get" : {
+        "tags" : [ "Cinemas" ],
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
+        } ],
+        "summary" : "Searches all cinemas",
+        "operationId" : "searchCinema",
+        "description" : "Searches all cinemas",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 5
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "cinemas" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Cinema"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/cinemas/{cinemaId}" : {
       "get" : {
         "tags" : [ "Cinemas" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches Cinema By Id",
-        "description" : "Gets cinema by id",
         "operationId" : "searchCinemaById",
+        "description" : "Gets cinema by id",
         "parameters" : [ {
           "name" : "cinemaId",
           "in" : "path",
           "description" : "cinema _id that needs to be found",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -674,7 +1146,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "cinema" : {
+                          "$ref" : "#/components/schemas/Cinema"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -684,7 +1170,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You do not have access to that document"
+                    }
+                  }
                 }
               }
             }
@@ -694,70 +1190,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "No doc found with that id"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "delete" : {
-        "tags" : [ "Cinemas" ],
-        "summary" : "Delete User By Id",
-        "description" : "This can only be done by the logged in owner.",
-        "operationId" : "deleteCinema",
-        "parameters" : [ {
-          "name" : "cinemaId",
-          "in" : "path",
-          "description" : "cinema _id that needs to be deleted",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_204"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Forbidden",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_1"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Cinema not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404_1"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       },
       "patch" : {
         "tags" : [ "Cinemas" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Update Cinema By Id",
         "description" : "This can only be done by the logged in owner.",
         "operationId" : "updateCinema",
@@ -766,8 +1220,6 @@
           "in" : "path",
           "description" : "cinema _id that needs to be updated",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -777,7 +1229,16 @@
           "content" : {
             "x-www-form-urlencoded" : {
               "schema" : {
-                "$ref" : "#/components/schemas/cinemas_cinemaId_body"
+                "type" : "object",
+                "properties" : {
+                  "price" : {
+                    "type" : "integer",
+                    "example" : "23.99"
+                  },
+                  "active" : {
+                    "type" : "boolean"
+                  }
+                }
               }
             }
           }
@@ -788,7 +1249,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "cinema" : {
+                          "$ref" : "#/components/schemas/Cinema"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -798,7 +1273,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You do not have access to that document"
+                    }
+                  }
                 }
               }
             }
@@ -808,30 +1293,36 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "No doc found with that id"
+                    }
+                  }
                 }
               }
             }
           }
-        },
+        }
+      },
+      "delete" : {
+        "tags" : [ "Cinemas" ],
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/owners/{ownerId}/cinemas" : {
-      "get" : {
-        "tags" : [ "Cinemas" ],
-        "summary" : "Searches all cinemas from owner",
-        "description" : "Gets all cinemas from logged owner",
-        "operationId" : "searchCinemaByOwner",
+        } ],
+        "summary" : "Delete User By Id",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "deleteCinema",
         "parameters" : [ {
-          "name" : "ownerId",
+          "name" : "cinemaId",
           "in" : "path",
-          "description" : "owners _id to get cinemas from",
+          "description" : "cinema _id that needs to be deleted",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -842,7 +1333,13 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_9"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    }
+                  }
                 }
               }
             }
@@ -852,43 +1349,60 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You do not have access to that document"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Cinema not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "No doc found with that id"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
-    "/cinemas-within/distance/{distance}/latlng/{latlng}" : {
+    "/owners/{ownerId}/cinemas" : {
       "get" : {
         "tags" : [ "Cinemas" ],
-        "summary" : "Searches Cinema By Id",
-        "description" : "By passing in the appropriate options, you can search for available inventory in the system",
-        "operationId" : "searchCinemasWithin",
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Searches all cinemas from owner",
+        "operationId" : "searchCinemaByOwner",
+        "description" : "Gets all cinemas from logged owner",
         "parameters" : [ {
-          "name" : "distance",
+          "name" : "ownerId",
           "in" : "path",
-          "description" : "Set the maximum distance to the cinema in km",
+          "description" : "owners _id to get cinemas from",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "number"
-          }
-        }, {
-          "name" : "latlng",
-          "in" : "path",
-          "description" : "Set your location",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string",
-            "example" : "-34.48374569,-58345734"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -897,7 +1411,110 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_9"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 5
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "cinemas" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Cinema"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You do not have access to that document"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cinemas-within/distance/{distance}/latlng/{latlng}" : {
+      "get" : {
+        "tags" : [ "Cinemas" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Searches Cinema By Id",
+        "operationId" : "searchCinemasWithin",
+        "description" : "By passing in the appropriate options, you can search for available inventory in the system",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "distance",
+          "description" : "Set the maximum distance to the cinema in km",
+          "required" : true,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "in" : "path",
+          "name" : "latlng",
+          "description" : "Set your location",
+          "schema" : {
+            "type" : "string",
+            "example" : "-34.48374569,-58345734"
+          },
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 5
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "cinemas" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Cinema"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -907,20 +1524,30 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/theaters" : {
       "post" : {
         "tags" : [ "Theaters" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Create new Theater",
         "description" : "Create new Theater",
         "operationId" : "addTheater",
@@ -929,7 +1556,24 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/theaters_body"
+                "type" : "object",
+                "properties" : {
+                  "theaterNumber" : {
+                    "type" : "number",
+                    "example" : 1
+                  },
+                  "numberOfRows" : {
+                    "type" : "number",
+                    "example" : 20
+                  },
+                  "numberOfCols" : {
+                    "type" : "number",
+                    "example" : 10
+                  },
+                  "cinema" : {
+                    "$ref" : "#/components/schemas/Cinema/properties/_id"
+                  }
+                }
               }
             }
           }
@@ -940,7 +1584,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "theater" : {
+                          "$ref" : "#/components/schemas/Theater"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -950,7 +1608,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_4"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Duplicate key error"
+                    }
+                  }
                 }
               }
             }
@@ -960,30 +1628,38 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/cinema/{cinemaId}/theaters" : {
       "get" : {
         "tags" : [ "Theaters" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches Theaters By Cinema",
-        "description" : "Gets a specific cinema theaters",
         "operationId" : "searchTheaterByCinema",
+        "description" : "Gets a specific cinema theaters",
         "parameters" : [ {
           "name" : "cinemaId",
           "in" : "path",
           "description" : "name that need to be deleted",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -994,7 +1670,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_10"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 5
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "theaters" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Cinema"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1004,30 +1701,38 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You do not have access to that document"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/theaters/{theaterId}" : {
       "get" : {
         "tags" : [ "Theaters" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches Theater By Id",
-        "description" : "Gets a single theater",
         "operationId" : "searchTheaterById",
+        "description" : "Gets a single theater",
         "parameters" : [ {
           "name" : "theaterId",
           "in" : "path",
           "description" : "id of the theater",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1038,7 +1743,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "theater" : {
+                          "$ref" : "#/components/schemas/Theater"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1048,50 +1767,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You do not have access to that document"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "delete" : {
-        "tags" : [ "Theaters" ],
-        "summary" : "Delete Theaters By Id",
-        "description" : "This can only be done by the logged in owner.",
-        "operationId" : "deleteTheaters",
-        "parameters" : [ {
-          "name" : "theaterId",
-          "in" : "path",
-          "description" : "name that need to be deleted",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_204"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       },
       "patch" : {
         "tags" : [ "Theaters" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Update Theaters By Id",
         "description" : "This can only be done by the logged in owner.",
         "operationId" : "updateTheaters",
@@ -1100,8 +1797,6 @@
           "in" : "path",
           "description" : "name that need to be updated",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1122,7 +1817,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201_1"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "theater" : {
+                          "$ref" : "#/components/schemas/Theater"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1132,94 +1841,65 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
+        }
+      },
+      "delete" : {
+        "tags" : [ "Theaters" ],
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/showtimes" : {
-      "get" : {
-        "tags" : [ "Showtimes" ],
-        "summary" : "Searches Showtimes with query params",
-        "description" : "Gets all showtimes with query options",
-        "operationId" : "searchShowtime",
+        } ],
+        "summary" : "Delete Theaters By Id",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "deleteTheaters",
         "parameters" : [ {
-          "name" : "startTime",
-          "in" : "query",
-          "description" : "Filter by date",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
+          "name" : "theaterId",
+          "in" : "path",
+          "description" : "name that need to be deleted",
+          "required" : true,
           "schema" : {
-            "type" : "string",
-            "default" : "available"
-          }
-        }, {
-          "name" : "movie",
-          "in" : "query",
-          "description" : "Filter by movie",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "default" : "available"
-          }
-        }, {
-          "name" : "cinema",
-          "in" : "query",
-          "description" : "Filter by cinema",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "default" : "available"
-          }
-        }, {
-          "name" : "availableSeats",
-          "in" : "query",
-          "description" : "Filter by available seats left",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "number"
+            "type" : "string"
           }
         } ],
         "responses" : {
-          "200" : {
+          "204" : {
             "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_11"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Forbidden",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    }
+                  }
                 }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "/showtimes" : {
+      "post" : {
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
-      },
-      "post" : {
+        } ],
         "tags" : [ "Showtimes" ],
         "summary" : "Create new Showtime",
         "description" : "Create new Showtime",
@@ -1229,7 +1909,24 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/showtimes_body"
+                "type" : "object",
+                "properties" : {
+                  "theater" : {
+                    "$ref" : "#/components/schemas/Theater/properties/_id"
+                  },
+                  "movie" : {
+                    "$ref" : "#/components/schemas/Movie/properties/_id"
+                  },
+                  "startTime" : {
+                    "type" : "string",
+                    "format" : "date",
+                    "example" : "2023-01-25T16:06:00Z"
+                  },
+                  "price" : {
+                    "type" : "number",
+                    "example" : 1000
+                  }
+                }
               }
             }
           }
@@ -1240,7 +1937,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "showtime" : {
+                          "$ref" : "#/components/schemas/Showtime"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1250,7 +1961,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_400_4"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Duplicate key error"
+                    }
+                  }
                 }
               }
             }
@@ -1260,30 +1981,141 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
+        }
+      },
+      "get" : {
+        "tags" : [ "Showtimes" ],
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
+        } ],
+        "summary" : "Searches Showtimes with query params",
+        "operationId" : "searchShowtime",
+        "description" : "Gets all showtimes with query options",
+        "parameters" : [ {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "Filter by date",
+          "required" : false,
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "default" : "available"
+          }
+        }, {
+          "name" : "movie",
+          "in" : "query",
+          "description" : "Filter by movie",
+          "required" : false,
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "default" : "available"
+          }
+        }, {
+          "name" : "cinema",
+          "in" : "query",
+          "description" : "Filter by cinema",
+          "required" : false,
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "default" : "available"
+          }
+        }, {
+          "name" : "availableSeats",
+          "in" : "query",
+          "description" : "Filter by available seats left",
+          "required" : false,
+          "explode" : true,
+          "schema" : {
+            "type" : "number",
+            "default" : "available"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 5
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "showtimes" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Showtime"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You you must be logged"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/showtime/{showtimeId}" : {
       "get" : {
         "tags" : [ "Showtimes" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches Showtime By Id",
-        "description" : "Get showtimes by id",
         "operationId" : "searchShowtimeById",
+        "description" : "Get showtimes by id",
         "parameters" : [ {
           "name" : "showtimeId",
           "in" : "path",
           "description" : "_id of the showtime needed",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1294,7 +2126,24 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_12"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "showtime" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Showtime"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1304,60 +2153,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "No document was found with that id"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
-      "delete" : {
-        "tags" : [ "Showtimes" ],
-        "summary" : "Delete Showtime By Id",
-        "description" : "This can only be done by the logged in owner.",
-        "operationId" : "deleteShowtime",
-        "parameters" : [ {
-          "name" : "showtimeId",
-          "in" : "path",
-          "description" : "name that need to be deleted",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_204"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404_2"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       },
       "patch" : {
         "tags" : [ "Showtimes" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Update Showtime By Id",
         "description" : "Update a showtime by id.",
         "operationId" : "updateShowtime",
@@ -1366,8 +2183,6 @@
           "in" : "path",
           "description" : "name that need to be deleted",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1388,7 +2203,24 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_12"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "showtime" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Showtime"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1398,29 +2230,93 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "No document was found with that id"
+                    }
+                  }
                 }
               }
             }
           }
-        },
+        }
+      },
+      "delete" : {
+        "tags" : [ "Showtimes" ],
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
+        } ],
+        "summary" : "Delete Showtime By Id",
+        "description" : "This can only be done by the logged in owner.",
+        "operationId" : "deleteShowtime",
+        "parameters" : [ {
+          "name" : "showtimeId",
+          "in" : "path",
+          "description" : "name that need to be deleted",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "No document was found with that id"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/cinemas/{cinemaId}/movies/{movieId}/showtimes" : {
       "get" : {
         "tags" : [ "Showtimes" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches Showtimes of a movie in a cinema",
-        "description" : "Gets all showtimes with query options",
         "operationId" : "searchShowtimeBymovieAndCinema",
+        "description" : "Gets all showtimes with query options",
         "parameters" : [ {
           "name" : "cinemaId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1428,8 +2324,6 @@
           "name" : "movieId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1438,7 +2332,6 @@
           "in" : "query",
           "description" : "Filter by date",
           "required" : false,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string",
@@ -1451,7 +2344,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_11"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 5
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "showtimes" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Showtime"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1461,51 +2375,58 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You you must be logged"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/movies" : {
       "get" : {
         "tags" : [ "Movies" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches all movies",
-        "description" : "Search movies with query parameters",
         "operationId" : "searchmovies",
+        "description" : "Search movies with query parameters",
         "parameters" : [ {
           "name" : "limit",
           "in" : "query",
           "description" : "Limit the size of movies",
           "required" : false,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string",
-            "example" : "10"
+            "example" : 10
           }
         }, {
           "name" : "skip",
           "in" : "query",
           "description" : "For pagination",
           "required" : false,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string",
-            "example" : "2"
+            "example" : 2
           }
         }, {
           "name" : "genre",
           "in" : "query",
           "description" : "Filter by genre",
           "required" : false,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string",
@@ -1516,7 +2437,6 @@
           "in" : "query",
           "description" : "Filter by premiered",
           "required" : false,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "boolean"
@@ -1526,7 +2446,6 @@
           "in" : "query",
           "description" : "Filter by cinema",
           "required" : false,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string"
@@ -1536,7 +2455,6 @@
           "in" : "query",
           "description" : "Order by rating",
           "required" : false,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "number"
@@ -1548,7 +2466,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_13"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 5
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "movies" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Movie"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1558,30 +2497,38 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You you must be logged"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/cinema/{cinemaId}/movies" : {
       "get" : {
         "tags" : [ "Movies" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches all movies",
-        "description" : "Search movies with query parameters",
         "operationId" : "cinemamovies",
+        "description" : "Search movies with query parameters",
         "parameters" : [ {
           "name" : "cinemaId",
           "in" : "path",
           "description" : "cinema id to get movies from",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1592,7 +2539,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_13"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 5
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "movies" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Movie"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1602,30 +2570,38 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You you must be logged"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/movies/{movieId}" : {
       "get" : {
         "tags" : [ "Movies" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches movie By Id",
-        "description" : "By passing in the appropriate options, you can search for available inventory in the system",
         "operationId" : "searchmovieById",
+        "description" : "By passing in the appropriate options, you can search for available inventory in the system",
         "parameters" : [ {
           "name" : "movieId",
           "in" : "path",
           "description" : "movie that need to be deleted",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1647,46 +2623,15 @@
           "400" : {
             "description" : "bad input parameter"
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/bookings" : {
-      "get" : {
-        "tags" : [ "Bookings" ],
-        "summary" : "Searches user bookings",
-        "description" : "Get user bookings. You must be logged in",
-        "operationId" : "searchBooking",
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_14"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Forbidden",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_2"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      },
       "post" : {
         "tags" : [ "Bookings" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "New showtime booking",
         "description" : "Create new Booking",
         "operationId" : "addBooking",
@@ -1695,7 +2640,34 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/bookings_body"
+                "type" : "object",
+                "properties" : {
+                  "user" : {
+                    "$ref" : "#/components/schemas/User/properties/_id"
+                  },
+                  "showtime" : {
+                    "$ref" : "#/components/schemas/Showtime/properties/_id"
+                  },
+                  "seats" : {
+                    "type" : "array",
+                    "items" : {
+                      "properties" : {
+                        "row" : {
+                          "type" : "number",
+                          "example" : 3
+                        },
+                        "columnd" : {
+                          "type" : "number",
+                          "example" : 3
+                        },
+                        "taken" : {
+                          "type" : "boolean",
+                          "example" : false
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           },
@@ -1707,7 +2679,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201_3"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "booking" : {
+                          "$ref" : "#/components/schemas/Booking"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1717,20 +2703,92 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
+        }
+      },
+      "get" : {
+        "tags" : [ "Bookings" ],
         "security" : [ {
           "bearerAuth" : [ ]
-        } ]
+        } ],
+        "summary" : "Searches user bookings",
+        "operationId" : "searchBooking",
+        "description" : "Get user bookings. You must be logged in",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 3
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "bookings" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Booking"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You you must be logged"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/bookings/{bookingId}" : {
       "delete" : {
         "tags" : [ "Bookings" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Delete Booking By Id",
         "description" : "This can only be done by the logged in user.",
         "operationId" : "deleteBooking",
@@ -1739,8 +2797,6 @@
           "in" : "path",
           "description" : "_id of the booking that needs to be deleted",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1751,7 +2807,13 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_204"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    }
+                  }
                 }
               }
             }
@@ -1761,20 +2823,30 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_404_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "No document was found with that id"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/ratings" : {
       "post" : {
         "tags" : [ "Ratings" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Rate a movie",
         "description" : "Rate a movie",
         "operationId" : "rateMovie",
@@ -1783,7 +2855,21 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/ratings_body"
+                "type" : "object",
+                "properties" : {
+                  "rating" : {
+                    "type" : "number",
+                    "default" : 5,
+                    "minimum" : 1,
+                    "maximum" : 10
+                  },
+                  "comment" : {
+                    "type" : "string"
+                  },
+                  "movie" : {
+                    "$ref" : "#/components/schemas/Movie/properties/_id"
+                  }
+                }
               }
             }
           }
@@ -1794,7 +2880,21 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_201_4"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "rating" : {
+                          "$ref" : "#/components/schemas/Rating"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1804,30 +2904,38 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You must be logged in"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/user/{userId}/ratings" : {
       "get" : {
         "tags" : [ "Ratings" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches user ratings",
-        "description" : "Brings ratings by user or movie",
         "operationId" : "searchUserRatings",
+        "description" : "Brings ratings by user or movie",
         "parameters" : [ {
           "name" : "userId",
           "in" : "path",
           "description" : "_id of the user that provides reviews",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1838,7 +2946,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_15"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 3
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "ratings" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Rating"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1848,30 +2977,38 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You you must be logged"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     },
     "/movies/{movieId}/ratings" : {
       "get" : {
         "tags" : [ "Ratings" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "summary" : "Searches movie ratings",
-        "description" : "Brings ratings by user or movie",
         "operationId" : "searchmovieRatings",
+        "description" : "Brings ratings by user or movie",
         "parameters" : [ {
           "name" : "movieId",
           "in" : "path",
           "description" : "_id of the movie that provides reviews",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1882,7 +3019,28 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_200_15"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "results" : {
+                      "type" : "number",
+                      "example" : 3
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "ratings" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Rating"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1892,23 +3050,30 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/inline_response_403_2"
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You you must be logged"
+                    }
+                  }
                 }
               }
             }
           }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
+        }
       }
     }
   },
   "components" : {
     "schemas" : {
       "User" : {
-        "required" : [ "googleId", "mail", "name", "photo" ],
         "type" : "object",
+        "required" : [ "name", "mail", "googleId", "photo" ],
         "properties" : {
           "_id" : {
             "type" : "string",
@@ -1937,16 +3102,16 @@
           "bookings" : {
             "type" : "array",
             "format" : "ObjectoId",
-            "nullable" : true,
             "items" : {
               "$ref" : "#/components/schemas/Booking/properties/_id"
-            }
+            },
+            "nullable" : true
           }
         }
       },
       "Owner" : {
-        "required" : [ "mail", "password" ],
         "type" : "object",
+        "required" : [ "mail", "password" ],
         "properties" : {
           "_id" : {
             "type" : "string",
@@ -1970,16 +3135,16 @@
           "cinemas" : {
             "type" : "array",
             "format" : "ObjectoId",
-            "nullable" : true,
             "items" : {
               "$ref" : "#/components/schemas/Cinema/properties/_id"
-            }
+            },
+            "nullable" : true
           }
         }
       },
       "Cinema" : {
-        "required" : [ "address", "company", "name", "price" ],
         "type" : "object",
+        "required" : [ "name", "company", "price", "address" ],
         "properties" : {
           "_id" : {
             "type" : "string",
@@ -2003,7 +3168,17 @@
             "$ref" : "#/components/schemas/Address"
           },
           "geoloc" : {
-            "$ref" : "#/components/schemas/Cinema_geoloc"
+            "type" : "object",
+            "properties" : {
+              "long" : {
+                "type" : "number",
+                "example" : -37.1815644
+              },
+              "lat" : {
+                "type" : "number",
+                "example" : -56.9209917
+              }
+            }
           },
           "theaters" : {
             "type" : "array",
@@ -2019,8 +3194,8 @@
         }
       },
       "Address" : {
-        "required" : [ "city", "country", "county", "number", "state", "street" ],
         "type" : "object",
+        "required" : [ "street", "number", "county", "city", "state", "country" ],
         "properties" : {
           "street" : {
             "type" : "string",
@@ -2028,7 +3203,7 @@
           },
           "number" : {
             "type" : "integer",
-            "example" : 4567
+            "example" : "4567"
           },
           "county" : {
             "type" : "string",
@@ -2049,8 +3224,8 @@
         }
       },
       "Theater" : {
-        "required" : [ "cinema", "numberOfCols", "numberOfRows", "theaterNumber" ],
         "type" : "object",
+        "required" : [ "theaterNumber", "cinema", "numberOfRows", "numberOfCols" ],
         "properties" : {
           "_id" : {
             "type" : "string",
@@ -2079,8 +3254,8 @@
         }
       },
       "Showtime" : {
-        "required" : [ "movie", "startTime", "theater" ],
         "type" : "object",
+        "required" : [ "theater", "movie", "startTime" ],
         "properties" : {
           "_id" : {
             "type" : "string",
@@ -2107,14 +3282,27 @@
           "seats" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/bookings_seats"
+              "properties" : {
+                "row" : {
+                  "type" : "number",
+                  "example" : 3
+                },
+                "columnd" : {
+                  "type" : "number",
+                  "example" : 3
+                },
+                "taken" : {
+                  "type" : "boolean",
+                  "example" : false
+                }
+              }
             }
           }
         }
       },
       "Movie" : {
-        "required" : [ "actors", "director", "durationMin", "genre", "premiereDate", "synopsis", "title" ],
         "type" : "object",
+        "required" : [ "title", "genre", "synopsis", "premiereDate", "durationMin", "director", "actors" ],
         "properties" : {
           "_id" : {
             "type" : "string",
@@ -2153,7 +3341,7 @@
             "type" : "array",
             "items" : {
               "type" : "string",
-              "example" : "[\"Ralph Fiennes\",\"Bill Murray\"]"
+              "example" : [ "Ralph Fiennes", "Bill Murray" ]
             }
           },
           "avgRating" : {
@@ -2164,8 +3352,8 @@
         }
       },
       "Rating" : {
-        "required" : [ "comment", "date", "movie", "rating", "user" ],
         "type" : "object",
+        "required" : [ "rating", "date", "comment", "movie", "user" ],
         "properties" : {
           "_id" : {
             "type" : "string",
@@ -2173,10 +3361,10 @@
             "example" : "d290f1ee6c544b0190e6d701748f0851"
           },
           "rating" : {
-            "maximum" : 10,
-            "minimum" : 1,
             "type" : "number",
-            "default" : 5
+            "default" : 5,
+            "minimum" : 1,
+            "maximum" : 10
           },
           "date" : {
             "type" : "string",
@@ -2194,8 +3382,8 @@
         }
       },
       "Booking" : {
-        "required" : [ "seats", "showtime", "total" ],
         "type" : "object",
+        "required" : [ "showtime", "seats", "total" ],
         "properties" : {
           "_id" : {
             "type" : "string",
@@ -2208,15 +3396,28 @@
           "showtime" : {
             "type" : "array",
             "format" : "ObjectoId",
-            "nullable" : true,
             "items" : {
               "$ref" : "#/components/schemas/Showtime/properties/_id"
-            }
+            },
+            "nullable" : true
           },
           "seats" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/bookings_seats"
+              "properties" : {
+                "row" : {
+                  "type" : "number",
+                  "example" : 3
+                },
+                "columnd" : {
+                  "type" : "number",
+                  "example" : 3
+                },
+                "taken" : {
+                  "type" : "boolean",
+                  "example" : false
+                }
+              }
             }
           },
           "total" : {
@@ -2227,853 +3428,6 @@
           "active" : {
             "type" : "boolean",
             "example" : true
-          }
-        }
-      },
-      "users_auth_body" : {
-        "type" : "object",
-        "properties" : {
-          "token" : {
-            "type" : "string",
-            "example" : "987234ac059826d3045f67"
-          }
-        }
-      },
-      "inline_response_200" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_data"
-          }
-        }
-      },
-      "inline_response_400" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "Something went wrong"
-          }
-        }
-      },
-      "inline_response_200_1" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "accessToken" : {
-            "type" : "string",
-            "example" : "null"
-          },
-          "refreshToken" : {
-            "type" : "string",
-            "example" : "null"
-          }
-        }
-      },
-      "inline_response_403" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "You must be logged in"
-          }
-        }
-      },
-      "inline_response_200_2" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_2_data"
-          }
-        }
-      },
-      "users_body" : {
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "example" : "Tom Jones"
-          },
-          "imageUrl" : {
-            "type" : "string",
-            "format" : "url",
-            "example" : "https://....."
-          }
-        }
-      },
-      "inline_response_200_3" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_3_data"
-          }
-        }
-      },
-      "owners_auth_body" : {
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "example" : "user@mail.com"
-          },
-          "password" : {
-            "type" : "string",
-            "example" : "pass1234"
-          }
-        }
-      },
-      "inline_response_200_4" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_4_data"
-          }
-        }
-      },
-      "inline_response_400_1" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "Invalid email or password"
-          }
-        }
-      },
-      "inline_response_404" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "There is no owner with thar email"
-          }
-        }
-      },
-      "inline_response_200_5" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_5_data"
-          }
-        }
-      },
-      "owners_body" : {
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "example" : "user@mail.com"
-          },
-          "password" : {
-            "type" : "string",
-            "example" : "pass1234"
-          }
-        }
-      },
-      "inline_response_200_6" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "Confirmation email sent!"
-          }
-        }
-      },
-      "inline_response_400_2" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "Enter a valid email"
-          }
-        }
-      },
-      "inline_response_204" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          }
-        }
-      },
-      "owners_body_1" : {
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "example" : "Tom"
-          },
-          "mail" : {
-            "type" : "string",
-            "format" : "mail",
-            "example" : "tomjones@gmail.com"
-          },
-          "imageUrl" : {
-            "type" : "string",
-            "format" : "url",
-            "example" : "https://....."
-          }
-        }
-      },
-      "owners_forgotPassword_body" : {
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "example" : "user@mail.com"
-          }
-        }
-      },
-      "inline_response_200_7" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "Password recovery email sent!"
-          }
-        }
-      },
-      "resetPassword_token_body" : {
-        "type" : "object",
-        "properties" : {
-          "password" : {
-            "type" : "string",
-            "example" : "newPassword1234"
-          }
-        }
-      },
-      "inline_response_200_8" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "Password Updated"
-          }
-        }
-      },
-      "inline_response_400_3" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "Token expired or invalid"
-          }
-        }
-      },
-      "inline_response_200_9" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "results" : {
-            "type" : "number",
-            "example" : 5
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_9_data"
-          }
-        }
-      },
-      "cinemas_body" : {
-        "type" : "object",
-        "properties" : {
-          "company" : {
-            "type" : "string",
-            "example" : "Hoyts"
-          },
-          "name" : {
-            "type" : "string",
-            "example" : "Hoyts Abasto"
-          },
-          "address" : {
-            "$ref" : "#/components/schemas/Address"
-          },
-          "price" : {
-            "type" : "integer"
-          }
-        }
-      },
-      "inline_response_201" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_201_data"
-          }
-        }
-      },
-      "inline_response_400_4" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "Duplicate key error"
-          }
-        }
-      },
-      "inline_response_403_1" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "You do not have access to that document"
-          }
-        }
-      },
-      "inline_response_404_1" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "No doc found with that id"
-          }
-        }
-      },
-      "cinemas_cinemaId_body" : {
-        "type" : "object",
-        "properties" : {
-          "price" : {
-            "type" : "integer"
-          },
-          "active" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "theaters_body" : {
-        "type" : "object",
-        "properties" : {
-          "theaterNumber" : {
-            "type" : "number",
-            "example" : 1
-          },
-          "numberOfRows" : {
-            "type" : "number",
-            "example" : 20
-          },
-          "numberOfCols" : {
-            "type" : "number",
-            "example" : 10
-          },
-          "cinema" : {
-            "$ref" : "#/components/schemas/Cinema/properties/_id"
-          }
-        }
-      },
-      "inline_response_201_1" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_201_1_data"
-          }
-        }
-      },
-      "inline_response_200_10" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "results" : {
-            "type" : "number",
-            "example" : 5
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_10_data"
-          }
-        }
-      },
-      "inline_response_200_11" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "results" : {
-            "type" : "number",
-            "example" : 5
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_11_data"
-          }
-        }
-      },
-      "inline_response_403_2" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "You you must be logged"
-          }
-        }
-      },
-      "showtimes_body" : {
-        "type" : "object",
-        "properties" : {
-          "theater" : {
-            "$ref" : "#/components/schemas/Theater/properties/_id"
-          },
-          "movie" : {
-            "$ref" : "#/components/schemas/Movie/properties/_id"
-          },
-          "startTime" : {
-            "type" : "string",
-            "format" : "date"
-          },
-          "price" : {
-            "type" : "number",
-            "example" : 1000
-          }
-        }
-      },
-      "inline_response_201_2" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_201_2_data"
-          }
-        }
-      },
-      "inline_response_200_12" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_12_data"
-          }
-        }
-      },
-      "inline_response_404_2" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "fail"
-          },
-          "message" : {
-            "type" : "string",
-            "example" : "No document was found with that id"
-          }
-        }
-      },
-      "inline_response_200_13" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "results" : {
-            "type" : "number",
-            "example" : 5
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_13_data"
-          }
-        }
-      },
-      "inline_response_200_14" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "results" : {
-            "type" : "number",
-            "example" : 3
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_14_data"
-          }
-        }
-      },
-      "bookings_seats" : {
-        "properties" : {
-          "row" : {
-            "type" : "number",
-            "example" : 3
-          },
-          "columnd" : {
-            "type" : "number",
-            "example" : 3
-          },
-          "taken" : {
-            "type" : "boolean",
-            "example" : false
-          }
-        }
-      },
-      "bookings_body" : {
-        "type" : "object",
-        "properties" : {
-          "user" : {
-            "$ref" : "#/components/schemas/User/properties/_id"
-          },
-          "showtime" : {
-            "$ref" : "#/components/schemas/Showtime/properties/_id"
-          },
-          "seats" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/bookings_seats"
-            }
-          }
-        }
-      },
-      "inline_response_201_3" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_201_3_data"
-          }
-        }
-      },
-      "ratings_body" : {
-        "type" : "object",
-        "properties" : {
-          "rating" : {
-            "maximum" : 10,
-            "minimum" : 1,
-            "type" : "number",
-            "default" : 5
-          },
-          "comment" : {
-            "type" : "string"
-          },
-          "movie" : {
-            "$ref" : "#/components/schemas/Movie/properties/_id"
-          }
-        }
-      },
-      "inline_response_201_4" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_201_4_data"
-          }
-        }
-      },
-      "inline_response_200_15" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "example" : "success"
-          },
-          "results" : {
-            "type" : "number",
-            "example" : 3
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/inline_response_200_15_data"
-          }
-        }
-      },
-      "Cinema_geoloc" : {
-        "type" : "object",
-        "properties" : {
-          "long" : {
-            "type" : "number",
-            "example" : -37.1815644
-          },
-          "lat" : {
-            "type" : "number",
-            "example" : -56.9209917
-          }
-        }
-      },
-      "inline_response_200_data" : {
-        "type" : "object",
-        "properties" : {
-          "user" : {
-            "$ref" : "#/components/schemas/User"
-          },
-          "accessToken" : {
-            "type" : "string",
-            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-          },
-          "refreshToken" : {
-            "type" : "string",
-            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-          }
-        }
-      },
-      "inline_response_200_2_data" : {
-        "type" : "object",
-        "properties" : {
-          "user" : {
-            "$ref" : "#/components/schemas/User"
-          }
-        }
-      },
-      "inline_response_200_3_data" : {
-        "type" : "object",
-        "properties" : {
-          "_id" : {
-            "type" : "string",
-            "example" : "d290f1ee6c544b0190e6d701748f0851"
-          },
-          "name" : {
-            "type" : "string",
-            "example" : ""
-          },
-          "mail" : {
-            "type" : "string",
-            "example" : "example@mail.com"
-          },
-          "photo" : {
-            "type" : "string",
-            "example" : "public/owners/images/default.png"
-          },
-          "cinemas" : {
-            "type" : "array",
-            "example" : [ ],
-            "items" : {
-              "$ref" : "#/components/schemas/Cinema"
-            }
-          }
-        }
-      },
-      "inline_response_200_4_data" : {
-        "type" : "object",
-        "properties" : {
-          "owner" : {
-            "$ref" : "#/components/schemas/Owner"
-          },
-          "accessToken" : {
-            "type" : "string",
-            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-          },
-          "refreshToken" : {
-            "type" : "string",
-            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-          }
-        }
-      },
-      "inline_response_200_5_data" : {
-        "type" : "object",
-        "properties" : {
-          "owner" : {
-            "$ref" : "#/components/schemas/Owner"
-          }
-        }
-      },
-      "inline_response_200_9_data" : {
-        "type" : "object",
-        "properties" : {
-          "cinemas" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Cinema"
-            }
-          }
-        }
-      },
-      "inline_response_201_data" : {
-        "type" : "object",
-        "properties" : {
-          "cinema" : {
-            "$ref" : "#/components/schemas/Cinema"
-          }
-        }
-      },
-      "inline_response_201_1_data" : {
-        "type" : "object",
-        "properties" : {
-          "theater" : {
-            "$ref" : "#/components/schemas/Theater"
-          }
-        }
-      },
-      "inline_response_200_10_data" : {
-        "type" : "object",
-        "properties" : {
-          "theaters" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Cinema"
-            }
-          }
-        }
-      },
-      "inline_response_200_11_data" : {
-        "type" : "object",
-        "properties" : {
-          "showtimes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Showtime"
-            }
-          }
-        }
-      },
-      "inline_response_201_2_data" : {
-        "type" : "object",
-        "properties" : {
-          "showtime" : {
-            "$ref" : "#/components/schemas/Showtime"
-          }
-        }
-      },
-      "inline_response_200_12_data" : {
-        "type" : "object",
-        "properties" : {
-          "showtime" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Showtime"
-            }
-          }
-        }
-      },
-      "inline_response_200_13_data" : {
-        "type" : "object",
-        "properties" : {
-          "movies" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Movie"
-            }
-          }
-        }
-      },
-      "inline_response_200_14_data" : {
-        "type" : "object",
-        "properties" : {
-          "bookings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Booking"
-            }
-          }
-        }
-      },
-      "inline_response_201_3_data" : {
-        "type" : "object",
-        "properties" : {
-          "booking" : {
-            "$ref" : "#/components/schemas/Booking"
-          }
-        }
-      },
-      "inline_response_201_4_data" : {
-        "type" : "object",
-        "properties" : {
-          "rating" : {
-            "$ref" : "#/components/schemas/Rating"
-          }
-        }
-      },
-      "inline_response_200_15_data" : {
-        "type" : "object",
-        "properties" : {
-          "ratings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Rating"
-            }
           }
         }
       }
