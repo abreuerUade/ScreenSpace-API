@@ -3,10 +3,9 @@ const catchAsync = require('../utils/catchAsync');
 const Showtime = require('../models/showtimeModel');
 const Movie = require('../models/movieModel');
 const AppError = require('../utils/appError');
+const Theater = require('../models/theaterModel');
 
 const createShowtime = catchAsync(async (req, res, next) => {
-    req.body = { ...req.body, owner: res.locals.user.id };
-
     const movie = await Movie.findById(req.body.movie);
 
     if (Date.parse(req.body.startTime) < Date.parse(movie.premiereDate)) {
@@ -15,15 +14,33 @@ const createShowtime = catchAsync(async (req, res, next) => {
         );
     }
 
-    const newShowtime = await Showtime.create(req.body);
+    const newDoc = await Showtime.create(req.body);
 
-    const showtime = await Showtime.findById(newShowtime._id).populate('movie');
+    if (!newDoc) {
+        return next(new AppError('Cannot create showtime', 400));
+    }
 
-    res.status(201).json({
+    const theater = await Theater.findById(req.body.theater);
+
+    if (!theater) {
+        return next(new AppError('No theater found with that ID', 404));
+    }
+
+    const rows = theater.numberOfRows;
+    const cols = theater.numberOfCols;
+    newDoc.cinema = theater.cinema;
+
+    newDoc.availableSeatsLeft = rows * cols;
+    for (let r = 1; r <= rows; r++) {
+        for (let c = 1; c <= cols; c++) {
+            newDoc.seats.push({ row: r, column: c, taken: false });
+        }
+    }
+    await newDoc.save({ validateBeforeSave: false });
+
+    res.status(200).json({
         status: 'success',
-        data: {
-            showtime,
-        },
+        data: newDoc,
     });
 });
 

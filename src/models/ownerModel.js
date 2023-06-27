@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const crypto = require('crypto');
+const Cinema = require('./cinemaModel');
 
 const Schema = mongoose.Schema;
 const ownerSchema = new Schema({
@@ -57,8 +58,17 @@ ownerSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 12);
 });
 
-ownerSchema.pre(/^find/, async function (next) {
-    this.find({ active: { $ne: false } });
+// ownerSchema.pre(/^find/, async function (next) {
+//     this.find({ active: { $ne: false } });
+//     next();
+// });
+
+ownerSchema.post(/elete$/, async function (doc, next) {
+    const cinemas = await Cinema.find({ owner: doc._id });
+
+    cinemas.forEach(async cinema => {
+        await Cinema.findByIdAndDelete(cinema._id);
+    });
     next();
 });
 

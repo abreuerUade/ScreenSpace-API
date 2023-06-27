@@ -127,7 +127,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
         return next(new AppError('There is no owner with thar email', 404));
     }
 
-    // Generate random new password and updatre user
+    // Generate random new password and update user
     const tempPassword = crypto.randomBytes(8).toString('hex');
     // generate token
     // const token = owner.createEmailToken();

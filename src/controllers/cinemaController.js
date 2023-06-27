@@ -6,6 +6,7 @@ const sharp = require('sharp');
 const AppError = require('../utils/appError');
 const Theater = require('../models/theaterModel');
 const Showtime = require('../models/showtimeModel');
+const Owner = require('../models/ownerModel');
 
 const uploadCinemaPhoto = upload.single('photo');
 
@@ -70,7 +71,25 @@ const getAllCinemas = factory.getAll(Cinema);
 const getCinema = factory.getOne(Cinema);
 // const getCinema = factory.getOne(Cinema, { path: 'theaters' });
 
-const postCinema = factory.createOne(Cinema);
+const postCinema = catchAsync(async (req, res, next) => {
+    req.body = { ...req.body, owner: res.locals.user.id };
+
+    if (req.file) req.body.photo = `/images/cinemas/${req.file.filename}`;
+
+    const newDoc = await Cinema.create(req.body);
+
+    const owner = await Owner.findById(res.locals.user.id);
+
+    const newCinemas = [...owner.cinemas, newDoc.id];
+
+    owner.cinemas = newCinemas;
+    await owner.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        status: 'success',
+        data: newDoc,
+    });
+});
 
 const updateCinema = factory.updateOne(Cinema);
 
@@ -81,10 +100,10 @@ const deleteCinema = catchAsync(async (req, res, next) => {
         return next(new AppError('No cinema found with that ID', 404));
     }
 
-    cinema.theaters.forEach(async item => {
-        await Showtime.deleteMany({ theater: item });
+    await Owner.findByIdAndUpdate(res.locals.user.id, {
+        $pull: { cinemas: req.params.id },
     });
-    await Theater.deleteMany({ cinema: req.params.id });
+
     await Cinema.findByIdAndDelete(req.params.id);
 
     res.status(200).json({

@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const upload = require('../utils/multerConfig');
 const sharp = require('sharp');
+const Cinema = require('../models/cinemaModel');
 
 const uploadOwnerPhoto = upload.single('photo');
 
@@ -66,7 +67,7 @@ const updateMe = catchAsync(async (req, res, next) => {
 });
 
 const deleteMe = catchAsync(async (req, res, next) => {
-    const owner = await Owner.findByIdAndDelete(res.locals.user.id);
+    await Owner.findByIdAndDelete(res.locals.user.id);
 
     res.status(200).json({
         status: 'success',
@@ -78,7 +79,16 @@ const getOwner = factory.getOne(Owner);
 
 const updateOwner = factory.updateOne(Owner); // Do not update pass
 
-const deleteOwner = factory.deleteOne(Owner);
+// const deleteOwner = catchAsync(async (req, res, next) => {
+//     const owner = await Owner.findById(res.locals.user.id);
+
+//     owner.cinemas.forEach(async item => {
+//         const cinema = await Cinema.findById(item).select('+skipMiddleware');
+//         cinema.skipMiddleware = true;
+//         await cinema.save({ validateBeforeSave: false });
+//         await Cinema.findByIdAndDelete(item);
+//     });
+// });
 
 module.exports = {
     uploadOwnerPhoto,
@@ -88,5 +98,5 @@ module.exports = {
     deleteMe,
     getOwner,
     updateOwner,
-    deleteOwner,
+    // deleteOwner,
 };

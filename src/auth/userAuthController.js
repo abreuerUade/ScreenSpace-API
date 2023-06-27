@@ -8,7 +8,7 @@ const AppError = require('../utils/appError');
 const login = catchAsync(async (req, res, next) => {
     //Google verivication
     const payload = await verify(req.body.idToken);
-
+    console.log(req.body.idToken);
     if (payload.statusCode === 400) {
         return next(new AppError('Invalid idToken', 400));
     }

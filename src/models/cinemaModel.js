@@ -1,47 +1,60 @@
 const mongoose = require('mongoose');
-const Owner = require('./ownerModel');
+const Theater = require('./theaterModel');
 
 const Schema = mongoose.Schema;
 
-const cinemaSchema = new Schema({
-    company: {
-        type: String,
-        required: [true, 'Cinema must have a company name'],
-    },
-    name: {
-        type: String,
-        required: [true, 'Cinema must have a name'],
-    },
-    photo: { type: String },
-    address: {
-        street: { type: String },
-        number: { type: String },
-        county: { type: String },
-        city: { type: String },
-        state: { type: String },
-        country: { type: String },
-        postalCode: { type: String },
-    },
-    location: {
-        // GeoJSON
-        type: {
+const cinemaSchema = new Schema(
+    {
+        company: {
             type: String,
-            default: 'Point',
-            enum: ['Point'],
+            required: [true, 'Cinema must have a company name'],
         },
-        coordinates: {
-            type: [Number],
-            default: [0, 0],
+        name: {
+            type: String,
+            required: [true, 'Cinema must have a name'],
+        },
+        photo: { type: String },
+        address: {
+            street: { type: String },
+            number: { type: String },
+            county: { type: String },
+            city: { type: String },
+            state: { type: String },
+            country: { type: String },
+            postalCode: { type: String },
+        },
+        location: {
+            // GeoJSON
+            type: {
+                type: String,
+                default: 'Point',
+                enum: ['Point'],
+            },
+            coordinates: {
+                type: [Number],
+                default: [0, 0],
+            },
+        },
+        theaters: [
+            { type: Schema.Types.ObjectId, default: [], ref: 'Theater' },
+        ],
+        active: { type: Boolean, default: true },
+        owner: {
+            type: Schema.Types.ObjectId,
+            // select: false,
+            ref: 'Owner',
+        },
+        skipMiddleware: {
+            type: Boolean,
+            default: false,
+            select: false,
         },
     },
-    theaters: [{ type: Schema.Types.ObjectId, default: [], ref: 'Theater' }],
-    active: { type: Boolean, default: true },
-    owner: {
-        type: Schema.Types.ObjectId,
-        // select: false,
-        ref: 'Owner',
-    },
-});
+    {
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
 
 // cinemaSchema.pre('save', async function (next) {
 //     const address = this.address;
@@ -74,16 +87,20 @@ const cinemaSchema = new Schema({
 //     next();
 // });
 
-cinemaSchema.post('save', async function (doc, next) {
-    const owner = await Owner.findById(doc.owner);
+// cinemaSchema.post('save', async function (doc, next) {
+//     if (doc.skipMiddleware) {
+//         console.log('skipped!!!');
+//         return next();
+//     }
+//     const owner = await Owner.findById(doc.owner);
 
-    const newCinemas = [...owner.cinemas, this.id];
+//     const newCinemas = [...owner.cinemas, this.id];
 
-    owner.cinemas = newCinemas;
-    await owner.save({ validateBeforeSave: false });
+//     owner.cinemas = newCinemas;
+//     await owner.save({ validateBeforeSave: false });
 
-    next();
-});
+//     next();
+// });
 // cinemaSchema.pre(/^find/, function (next) {
 //     // La regex es para q funcione para todos los find
 //     // this.find({ active: { $ne: false } });
@@ -91,14 +108,11 @@ cinemaSchema.post('save', async function (doc, next) {
 // });
 
 cinemaSchema.post(/elete$/, async function (doc, next) {
-    const owner = await Owner.findById(doc.owner);
+    const theaters = await Theater.find({ cinema: doc._id });
 
-    const cinemas = owner.cinemas.filter(
-        cinema => JSON.stringify(cinema) !== JSON.stringify(doc.id)
-    );
-
-    owner.cinemas = cinemas;
-    await owner.save({ validateBeforeSave: false });
+    theaters.forEach(async theater => {
+        await Theater.findByIdAndDelete(theater._id);
+    });
     next();
 });
 

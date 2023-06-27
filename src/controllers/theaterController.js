@@ -20,7 +20,21 @@ const getCinemaTheaters = catchAsync(async (req, res, next) => {
     });
 });
 
-const createTheater = factory.createOne(Theater);
+const createTheater = catchAsync(async (req, res, next) => {
+    const newDoc = await Theater.create(req.body);
+
+    const cinema = await Cinema.findById(req.body.cinema);
+
+    const theaters = [...cinema.theaters, newDoc.id];
+
+    cinema.theaters = theaters;
+    cinema.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        status: 'success',
+        data: newDoc,
+    });
+});
 
 const getTheater = factory.getOne(Theater);
 
@@ -32,19 +46,12 @@ const deleteTheater = catchAsync(async (req, res, next) => {
     if (!theater) {
         return next(new AppError('No theater found with that ID', 404));
     }
-    await Showtime.deleteMany({ theater: req.params.id });
 
-    const cinema = await Cinema.findById(theater.cinema);
-
-    const theaters = cinema.theaters.filter(
-        theater => JSON.stringify(theater) !== JSON.stringify(req.params.id)
-    );
-
-    cinema.theaters = theaters;
-    await cinema.save({ validateBeforeSave: false });
+    await Cinema.findByIdAndUpdate(theater.cinema, {
+        $pull: { theaters: req.params.id },
+    });
 
     await Theater.findByIdAndDelete(req.params.id);
-
     res.status(200).json({
         status: 'success',
         data: null,

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Cinema = require('./cinemaModel');
+const Showtime = require('./showtimeModel');
 
 const Schema = mongoose.Schema;
 
@@ -37,13 +37,9 @@ theaterSchema.index({ theaterName: 1, cinema: 1 }, { unique: true });
 //     next();
 // });
 
-theaterSchema.post('save', async function (doc, next) {
-    const cinema = await Cinema.findById(doc.cinema);
-
-    const theaters = [...cinema.theaters, doc.id];
-
-    cinema.theaters = theaters;
-    cinema.save({ validateBeforeSave: false });
+theaterSchema.post(/elete$/, async function (doc, next) {
+    await Showtime.deleteMany({ theater: doc._id });
+    next();
 });
 
 module.exports = mongoose.model('Theater', theaterSchema);

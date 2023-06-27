@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Theater = require('../models/theaterModel');
+const Theater = require('./theaterModel');
 
 const Schema = mongoose.Schema;
 
@@ -34,24 +34,5 @@ const showtimeSchema = new Schema({
 });
 
 showtimeSchema.index({ theater: 1, startTime: 1 }, { unique: true });
-
-showtimeSchema.pre('save', async function (next) {
-    const theater = await Theater.findById(this.theater).populate({
-        path: 'cinema',
-    });
-
-    const rows = theater.numberOfRows;
-    const cols = theater.numberOfCols;
-    this.cinema = theater.cinema;
-    this.startTime = new Date(this.startTime);
-    if (this.seats.length === 0) {
-        this.availableSeatsLeft = rows * cols;
-        for (let r = 1; r <= rows; r++) {
-            for (let c = 1; c <= cols; c++) {
-                this.seats.push({ row: r, column: c, taken: false });
-            }
-        }
-    }
-});
 
 module.exports = mongoose.model('Showtime', showtimeSchema);
