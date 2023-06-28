@@ -14,4 +14,14 @@ const getMovieRatings = catchAsync(async (req, res, next) => {
     });
 });
 
-module.exports = { rateMovie, getMovieRatings };
+const getUserRatings = catchAsync(async (req, res, next) => {
+    const ratings = await Rating.find({ user: req.params.id });
+    res.status(200).json({
+        status: 'success',
+        data: {
+            ratings,
+        },
+    });
+});
+
+module.exports = { rateMovie, getMovieRatings, getUserRatings };

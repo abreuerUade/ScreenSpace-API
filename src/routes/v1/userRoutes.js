@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const userAuthController = require('../../auth/userAuthController');
 const userController = require('../../controllers/userController');
+const ratingController = require('../../controllers/ratingController');
 const requireUser = require('../../middleware/requireUser');
 const { restrictTo } = require('../../middleware/restrictRole');
 
@@ -19,5 +20,7 @@ router
         userController.updateMe
     )
     .delete(userController.deleteMe);
+
+router.get('/:id/ratings', ratingController.getUserRatings);
 
 module.exports = router;
