@@ -52,7 +52,26 @@ const getAllShowtimes = factory.getAll(Showtime, [
     'cinema',
 ]);
 
-const updateShowtime = factory.updateOne(Showtime);
+const updateShowtime = catchAsync(async (req, res, next) => {
+    const doc = await Showtime.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+    })
+        .populate('movie')
+        .populate('theater')
+        .populate('cinema');
+
+    if (!doc) {
+        return next(new AppError('No doc found with that id', 404));
+    }
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            doc,
+        },
+    });
+});
 
 const deleteShowtime = factory.deleteOne(Showtime);
 

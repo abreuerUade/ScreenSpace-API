@@ -44,11 +44,6 @@ const cinemaSchema = new Schema(
             // select: false,
             ref: 'Owner',
         },
-        skipMiddleware: {
-            type: Boolean,
-            default: false,
-            select: false,
-        },
     },
     {
         toJSON: { virtuals: true },
@@ -85,26 +80,6 @@ const cinemaSchema = new Schema(
 // cinemaSchema.pre(/^find/, async function (next) {
 //     this.find({ active: { $ne: false } });
 //     next();
-// });
-
-// cinemaSchema.post('save', async function (doc, next) {
-//     if (doc.skipMiddleware) {
-//         console.log('skipped!!!');
-//         return next();
-//     }
-//     const owner = await Owner.findById(doc.owner);
-
-//     const newCinemas = [...owner.cinemas, this.id];
-
-//     owner.cinemas = newCinemas;
-//     await owner.save({ validateBeforeSave: false });
-
-//     next();
-// });
-// cinemaSchema.pre(/^find/, function (next) {
-//     // La regex es para q funcione para todos los find
-//     // this.find({ active: { $ne: false } });
-//     next();/elete$/
 // });
 
 cinemaSchema.post(/elete$/, async function (doc, next) {
