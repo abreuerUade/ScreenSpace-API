@@ -9,6 +9,10 @@ router.use(requireUser);
 router.get('/', movieController.getAllMovies);
 router.get('/:id', movieController.getOneMovie);
 
-router.get('/:id/ratings', restrictTo('user'), ratingController.rateMovie);
+router.get(
+    '/:id/ratings',
+    restrictTo('user'),
+    ratingController.getMovieRatings
+);
 
 module.exports = router;
