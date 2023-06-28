@@ -8,6 +8,7 @@ const getMovieRatings = catchAsync(async (req, res, next) => {
     const ratings = await Rating.find({ movie: req.params.id });
     res.status(200).json({
         status: 'success',
+        results: ratings.length,
         data: {
             ratings,
         },
@@ -18,6 +19,7 @@ const getUserRatings = catchAsync(async (req, res, next) => {
     const ratings = await Rating.find({ user: req.params.id });
     res.status(200).json({
         status: 'success',
+        results: ratings.length,
         data: {
             ratings,
         },
