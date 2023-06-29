@@ -5,7 +5,9 @@ const catchAsync = require('../utils/catchAsync');
 const rateMovie = factory.createOne(Rating);
 
 const getMovieRatings = catchAsync(async (req, res, next) => {
-    const ratings = await Rating.find({ movie: req.params.id });
+    const ratings = await Rating.find({ movie: req.params.id }).populate(
+        'user'
+    );
     res.status(200).json({
         status: 'success',
         results: ratings.length,
