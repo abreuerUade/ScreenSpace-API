@@ -7,4 +7,9 @@ router.use(requireUser, restrictTo('user'));
 
 router.post('/', ratingController.rateMovie);
 
+router
+    .route('/:id')
+    .patch(ratingController.updateRating)
+    .delete(ratingController.deleteRating);
+
 module.exports = router;

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Movie = require('./movieModel');
+const AppError = require('../utils/appError');
 
 const Schema = mongoose.Schema;
 
@@ -60,6 +61,13 @@ ratingSchema.statics.calcAverageRatings = async function (movieId) {
 
 ratingSchema.post('save', function () {
     this.constructor.calcAverageRatings(this.movie);
+});
+
+ratingSchema.post(/^findOneAnd/, async function (doc, next) {
+    if (!doc) {
+        return next(new AppError('No doc found with that id', 404));
+    }
+    await doc.constructor.calcAverageRatings(doc.movie);
 });
 
 module.exports = mongoose.model('Rating', ratingSchema);

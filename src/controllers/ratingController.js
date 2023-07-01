@@ -28,4 +28,14 @@ const getUserRatings = catchAsync(async (req, res, next) => {
     });
 });
 
-module.exports = { rateMovie, getMovieRatings, getUserRatings };
+const updateRating = factory.updateOne(Rating);
+
+const deleteRating = factory.deleteOne(Rating);
+
+module.exports = {
+    rateMovie,
+    getMovieRatings,
+    getUserRatings,
+    updateRating,
+    deleteRating,
+};
