@@ -106,6 +106,29 @@ const getShowtimesByTheater = catchAsync(async (req, res, next) => {
     });
 });
 
+const getShowtimesForMovie = catchAsync(async (req, res, next) => {
+    const { movie, latlng } = req.query;
+    const [lng, lat] = latlng.split(',');
+    const multiplier = 0.001;
+
+    if (!lat || !lng || !movie) {
+        next(
+            new AppError('Please provide latitutd, longitude and movie.', 400)
+        );
+    }
+
+    const showtimes = await Showtime.find({ movie })
+        .populate('cinema')
+        .aggregate([{}]);
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            data: distances,
+        },
+    });
+});
+
 module.exports = {
     createShowtime,
     getShowtime,
@@ -114,4 +137,5 @@ module.exports = {
     deleteShowtime,
     cinemaMovieShowtimes,
     getShowtimesByTheater,
+    getShowtimesForMovie,
 };

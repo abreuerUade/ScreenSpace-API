@@ -39,8 +39,8 @@ const getOwnerCinemas = catchAsync(async (req, res, next) => {
 });
 
 const getCinemasInRadius = catchAsync(async (req, res, next) => {
-    const { distance, latlng } = req.params;
-    const [lat, lng] = latlng.split(',');
+    const { distance, latlng } = req.query;
+    const [lng, lat] = latlng.split(',');
 
     if (!lat || !lng) {
         next(

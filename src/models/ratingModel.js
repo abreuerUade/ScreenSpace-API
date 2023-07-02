@@ -38,9 +38,18 @@ const ratingSchema = new Schema(
     }
 );
 
-ratingSchema.index({ user: 1, movie: 1 }, { unique: true });
+// ratingSchema.index({ user: 1, movie: 1 }, { unique: true });
 
 ratingSchema.statics.calcAverageRatings = async function (movieId) {
+    const r = await this.find({ movie: movieId });
+
+    if (r.length === 0) {
+        await Movie.findByIdAndUpdate(movieId, {
+            ratingsQuantity: 0,
+            ratingsAverage: 0,
+        });
+        return;
+    }
     const stats = await this.aggregate([
         {
             $match: { movie: movieId },

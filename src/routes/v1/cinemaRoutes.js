@@ -19,8 +19,8 @@ router
     );
 
 router.get(
-    '/cinemas-within/distance/:distance/latlng/:latlng',
-    restrictTo('user'),
+    '/cinemas-within/',
+    restrictTo('owner'),
     cinemaController.getCinemasInRadius
 );
 

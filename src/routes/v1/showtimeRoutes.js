@@ -18,4 +18,6 @@ router
 
 router.get('/showtimesByTheater/:id', showtimeController.getShowtimesByTheater);
 
+router.get('/ShowtimesForMovie/', showtimeController.getShowtimesForMovie);
+
 module.exports = router;
