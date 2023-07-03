@@ -12,7 +12,7 @@ const signup = catchAsync(async (req, res, next) => {
     const ownerExists = await Owner.findOne({ email: req.body.email });
 
     if (ownerExists) {
-        return next(new AppError('User alredy exists', 400));
+        return next(new AppError('User alredy exists', 401));
     }
 
     const newOwner = await Owner.create({

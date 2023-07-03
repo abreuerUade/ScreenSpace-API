@@ -13,6 +13,30 @@ const createShowtime = catchAsync(async (req, res, next) => {
             new AppError('The showtime cannot be before the premiere date', 400)
         );
     }
+    if (Date.parse(req.body.startTime) < Date.parse(new Date())) {
+        next(new AppError('The showtime cannot be before today', 400));
+    }
+
+    // const finishTime = new Date(
+    //     new Date(this.startTime).setMinutes(
+    //         this.startTime.getMinutes() + this.movie.duration + 30
+    //     )
+    // );
+
+    // let showtimes = await Showtime.find({ theater: req.body.theater });
+
+    // showtimes = showtimes.filter(item => {
+    //     return item.startTime.getDay() === req.body.startTime.getDay();
+    // });
+
+    // showtimes.forEach(item => {
+    //     if (
+    //         req.body.startTime.getTime() >= item.startTime.getTime() &&
+    //         req.body.startTime.getTime() <= item.finishTime.getTime()
+    //     ) {
+    //         next(new AppError('The showtime is overlapped', 400));
+    //     }
+    // });
 
     const newDoc = await Showtime.create(req.body);
 
@@ -28,6 +52,7 @@ const createShowtime = catchAsync(async (req, res, next) => {
 
     const rows = theater.numberOfRows;
     const cols = theater.numberOfCols;
+    newDoc.seats = [];
     newDoc.cinema = theater.cinema;
 
     newDoc.availableSeatsLeft = rows * cols;
@@ -38,7 +63,7 @@ const createShowtime = catchAsync(async (req, res, next) => {
     }
     await newDoc.save({ validateBeforeSave: false });
 
-    res.status(200).json({
+    res.status(201).json({
         status: 'success',
         data: newDoc,
     });
