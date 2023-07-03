@@ -4,6 +4,7 @@ const Showtime = require('../models/showtimeModel');
 const Movie = require('../models/movieModel');
 const AppError = require('../utils/appError');
 const Theater = require('../models/theaterModel');
+const APIFeatures = require('../utils/apiFeatures');
 
 const createShowtime = catchAsync(async (req, res, next) => {
     const movie = await Movie.findById(req.body.movie);
@@ -71,6 +72,44 @@ const createShowtime = catchAsync(async (req, res, next) => {
 
 const getShowtime = factory.getOne(Showtime, ['theater', 'movie', 'cinema']);
 
+// const getAllShowtimes = catchAsync(async (req, res, next) => {
+//     let query = Showtime.find()
+//         .populate('movie')
+//         .populate('theater')
+//         .populate('cinema');
+
+//     const features = new APIFeatures(query, req.query)
+//         .filter()
+//         .sort()
+//         .limitFields()
+//         .paginate();
+
+//     if (req.query.startTime) {
+//         const startTime = new Date(req.query.startTime);
+//         const finishTime = new Date(
+//             new Date(startTime).setMinutes(startTime.getMinutes() + 24 * 60)
+//         );
+
+//         console.log(startTime, finishTime);
+//         features.query = features.query.find({
+//             startTime: {
+//                 $gte: startTime,
+//                 $lte: finishTime,
+//             },
+//         });
+//     }
+
+//     const doc = await features.query;
+
+//     res.status(200).json({
+//         status: 'success',
+//         results: doc.length,
+//         data: {
+//             doc,
+//         },
+//     });
+// });
+
 const getAllShowtimes = factory.getAll(Showtime, [
     'theater',
     'movie',
@@ -100,7 +139,7 @@ const updateShowtime = catchAsync(async (req, res, next) => {
 
 const deleteShowtime = factory.deleteOne(Showtime);
 
-const cinemaMovieShowtimes = catchAsync(async (req, res, next) => {
+const cinemaMovieShowtimess = catchAsync(async (req, res, next) => {
     const showtimes = await Showtime.find({
         cinema: req.params.cinemaId,
         movie: req.params.movieId,
@@ -160,7 +199,6 @@ module.exports = {
     getAllShowtimes,
     updateShowtime,
     deleteShowtime,
-    cinemaMovieShowtimes,
     getShowtimesByTheater,
     getShowtimesForMovie,
 };

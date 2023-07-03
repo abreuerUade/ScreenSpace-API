@@ -25,12 +25,6 @@ router.get(
 );
 
 router.get(
-    '/:cinemaId/movies/:movieId/showtimes',
-    restrictTo('user'),
-    showtimeController.cinemaMovieShowtimes
-);
-
-router.get(
     '/:cinemaId/movies',
     restrictTo('user'),
     movieController.getMovieByCinema

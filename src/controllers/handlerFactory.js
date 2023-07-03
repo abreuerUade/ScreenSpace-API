@@ -81,6 +81,19 @@ exports.getAll = (Model, popOptions) =>
             .limitFields()
             .paginate();
 
+        if (req.query.startTime) {
+            const startTime = new Date(req.query.startTime);
+            const finishTime = new Date(
+                new Date(startTime).setMinutes(startTime.getMinutes() + 24 * 60)
+            );
+
+            features.query = features.query.find({
+                startTime: {
+                    $gte: startTime,
+                    $lte: finishTime,
+                },
+            });
+        }
         const doc = await features.query;
 
         // SEND RESPONSE

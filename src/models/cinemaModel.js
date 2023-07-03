@@ -3,53 +3,45 @@ const Theater = require('./theaterModel');
 
 const Schema = mongoose.Schema;
 
-const cinemaSchema = new Schema(
-    {
-        company: {
+const cinemaSchema = new Schema({
+    company: {
+        type: String,
+        required: [true, 'Cinema must have a company name'],
+    },
+    name: {
+        type: String,
+        required: [true, 'Cinema must have a name'],
+    },
+    photo: { type: String },
+    address: {
+        street: { type: String },
+        number: { type: String },
+        county: { type: String },
+        city: { type: String },
+        state: { type: String },
+        country: { type: String },
+        postalCode: { type: String },
+    },
+    location: {
+        // GeoJSON
+        type: {
             type: String,
-            required: [true, 'Cinema must have a company name'],
+            default: 'Point',
+            enum: ['Point'],
         },
-        name: {
-            type: String,
-            required: [true, 'Cinema must have a name'],
-        },
-        photo: { type: String },
-        address: {
-            street: { type: String },
-            number: { type: String },
-            county: { type: String },
-            city: { type: String },
-            state: { type: String },
-            country: { type: String },
-            postalCode: { type: String },
-        },
-        location: {
-            // GeoJSON
-            type: {
-                type: String,
-                default: 'Point',
-                enum: ['Point'],
-            },
-            coordinates: {
-                type: [Number],
-                default: [0, 0],
-            },
-        },
-        theaters: [
-            { type: Schema.Types.ObjectId, default: [], ref: 'Theater' },
-        ],
-        active: { type: Boolean, default: true },
-        owner: {
-            type: Schema.Types.ObjectId,
-            // select: false,
-            ref: 'Owner',
+        coordinates: {
+            type: [Number],
+            default: [0, 0],
         },
     },
-    {
-        toJSON: { virtuals: true },
-        toObject: { virtuals: true },
-    }
-);
+    theaters: [{ type: Schema.Types.ObjectId, default: [], ref: 'Theater' }],
+    active: { type: Boolean, default: true },
+    owner: {
+        type: Schema.Types.ObjectId,
+        // select: false,
+        ref: 'Owner',
+    },
+});
 
 // cinemaSchema.pre('save', async function (next) {
 //     const address = this.address;
