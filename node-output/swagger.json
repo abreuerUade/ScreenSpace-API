@@ -1,17 +1,14 @@
 {
   "openapi" : "3.0.0",
   "servers" : [ {
-    "description" : "SwaggerHub API Auto Mocking",
-    "url" : "https://virtserver.swaggerhub.com/BREUERANDRES/ScreenSpace-API/1.0.0"
-  }, {
-    "description" : "Developement URL",
-    "url" : "http://localhost:3500/api/v1"
-  }, {
     "description" : "Production URL",
     "url" : "https://screenspace-api.azurewebsites.net/api/v1"
+  }, {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/BREUERANDRES/ScreenSpace-API/1.0.0"
   } ],
   "info" : {
-    "description" : "This is a non commercial project for a software engineering degree. It´s a REST API for cinema management and movie ticket booking mobile app.",
+    "description" : "This is a non commercial project for a software engineering degree. It´s a monolithic REST API for cinema management and movie ticket booking mobile app.",
     "version" : "1.0.0",
     "title" : "ScreenSpace API",
     "contact" : {
@@ -368,34 +365,6 @@
                     "status" : {
                       "type" : "string",
                       "example" : "success"
-                    },
-                    "data" : {
-                      "type" : "object",
-                      "properties" : {
-                        "_id" : {
-                          "type" : "string",
-                          "example" : "d290f1ee6c544b0190e6d701748f0851"
-                        },
-                        "name" : {
-                          "type" : "string",
-                          "example" : ""
-                        },
-                        "mail" : {
-                          "type" : "string",
-                          "example" : "example@mail.com"
-                        },
-                        "photo" : {
-                          "type" : "string",
-                          "example" : "public/owners/images/default.png"
-                        },
-                        "cinemas" : {
-                          "type" : "array",
-                          "example" : [ ],
-                          "items" : {
-                            "$ref" : "#/components/schemas/Cinema"
-                          }
-                        }
-                      }
                     }
                   }
                 }
@@ -403,7 +372,24 @@
             }
           },
           "400" : {
-            "description" : "Token Expired or Invalid"
+            "description" : "Token Expired or Invalid",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Invalid email or password"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -485,26 +471,6 @@
                 }
               }
             }
-          },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "properties" : {
-                    "status" : {
-                      "type" : "string",
-                      "example" : "fail"
-                    },
-                    "message" : {
-                      "type" : "string",
-                      "example" : "There is no owner with thar email"
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       },
@@ -554,7 +520,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You must be logged in"
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -624,7 +590,27 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "Enter a valid email"
+                      "example" : "Invalid input data. Enter valid email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Duplication Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "User alredy exists"
                     }
                   }
                 }
@@ -638,9 +624,9 @@
         "security" : [ {
           "bearerAuth" : [ ]
         } ],
-        "summary" : "Get logged owners data",
+        "summary" : "Get logged owner data",
         "operationId" : "getOwner",
-        "description" : "Gets owners personal information. Must be logged in.",
+        "description" : "Gets owner personal information. Must be logged in.",
         "responses" : {
           "200" : {
             "description" : "Success",
@@ -656,7 +642,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "owner" : {
+                        "doc" : {
                           "$ref" : "#/components/schemas/Owner"
                         }
                       }
@@ -679,7 +665,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You must be logged in"
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -760,7 +746,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You must be logged in"
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -788,6 +774,10 @@
                     "status" : {
                       "type" : "string",
                       "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "string",
+                      "example" : null
                     }
                   }
                 }
@@ -849,10 +839,6 @@
                     "status" : {
                       "type" : "string",
                       "example" : "success"
-                    },
-                    "message" : {
-                      "type" : "string",
-                      "example" : "Password recovery email sent!"
                     }
                   }
                 }
@@ -882,27 +868,22 @@
         }
       }
     },
-    "/owners/resetPassword/{token}" : {
+    "/owners/password" : {
       "patch" : {
         "tags" : [ "Owners" ],
-        "summary" : "Reset password",
+        "summary" : "Update password",
         "description" : "Verifies that token was not modified and sets new password",
-        "operationId" : "resetPassword",
-        "parameters" : [ {
-          "name" : "token",
-          "in" : "path",
-          "description" : "Hashed token.",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        "operationId" : "updatePassword",
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
                 "type" : "object",
                 "properties" : {
+                  "currentPassword" : {
+                    "type" : "string",
+                    "example" : "newPassword1234"
+                  },
                   "password" : {
                     "type" : "string",
                     "example" : "newPassword1234"
@@ -993,7 +974,7 @@
           }
         },
         "responses" : {
-          "201" : {
+          "200" : {
             "description" : "Success",
             "content" : {
               "application/json" : {
@@ -1005,12 +986,7 @@
                       "example" : "success"
                     },
                     "data" : {
-                      "type" : "object",
-                      "properties" : {
-                        "cinema" : {
-                          "$ref" : "#/components/schemas/Cinema"
-                        }
-                      }
+                      "$ref" : "#/components/schemas/Cinema"
                     }
                   }
                 }
@@ -1050,7 +1026,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You must be logged in"
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -1086,7 +1062,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "cinemas" : {
+                        "doc" : {
                           "type" : "array",
                           "items" : {
                             "$ref" : "#/components/schemas/Cinema"
@@ -1112,7 +1088,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You must be logged in"
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -1155,7 +1131,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "cinema" : {
+                        "doc" : {
                           "$ref" : "#/components/schemas/Cinema"
                         }
                       }
@@ -1178,7 +1154,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You do not have access to that document"
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -1198,7 +1174,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "No doc found with that id"
+                      "example" : "Invalid _id: {cinemaId}."
                     }
                   }
                 }
@@ -1258,7 +1234,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "cinema" : {
+                        "doc" : {
                           "$ref" : "#/components/schemas/Cinema"
                         }
                       }
@@ -1281,7 +1257,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You do not have access to that document"
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -1338,6 +1314,10 @@
                     "status" : {
                       "type" : "string",
                       "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "string",
+                      "example" : null
                     }
                   }
                 }
@@ -1357,7 +1337,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You do not have access to that document"
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -1377,7 +1357,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "No doc found with that id"
+                      "example" : "No cinema found with that ID"
                     }
                   }
                 }
@@ -1421,15 +1401,10 @@
                       "type" : "number",
                       "example" : 5
                     },
-                    "data" : {
-                      "type" : "object",
-                      "properties" : {
-                        "cinemas" : {
-                          "type" : "array",
-                          "items" : {
-                            "$ref" : "#/components/schemas/Cinema"
-                          }
-                        }
+                    "cinemas" : {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/components/schemas/Cinema"
                       }
                     }
                   }
@@ -1450,7 +1425,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You do not have access to that document"
+                      "example" : "You are not allowed to get these cinemas"
                     }
                   }
                 }
@@ -1460,7 +1435,7 @@
         }
       }
     },
-    "/cinemas-within/distance/{distance}/latlng/{latlng}" : {
+    "/cinemas/cinemas-within/" : {
       "get" : {
         "tags" : [ "Cinemas" ],
         "security" : [ {
@@ -1470,22 +1445,25 @@
         "operationId" : "searchCinemasWithin",
         "description" : "By passing in the appropriate options, you can search for available inventory in the system",
         "parameters" : [ {
-          "in" : "path",
           "name" : "distance",
+          "in" : "query",
           "description" : "Set the maximum distance to the cinema in km",
           "required" : true,
+          "explode" : true,
           "schema" : {
-            "type" : "number"
+            "type" : "string",
+            "example" : 10
           }
         }, {
-          "in" : "path",
           "name" : "latlng",
+          "in" : "query",
           "description" : "Set your location",
+          "required" : true,
+          "explode" : true,
           "schema" : {
             "type" : "string",
             "example" : "-34.48374569,-58345734"
-          },
-          "required" : true
+          }
         } ],
         "responses" : {
           "200" : {
@@ -1503,15 +1481,10 @@
                       "type" : "number",
                       "example" : 5
                     },
-                    "data" : {
-                      "type" : "object",
-                      "properties" : {
-                        "cinemas" : {
-                          "type" : "array",
-                          "items" : {
-                            "$ref" : "#/components/schemas/Cinema"
-                          }
-                        }
+                    "cinemas" : {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/components/schemas/Cinema"
                       }
                     }
                   }
@@ -1532,7 +1505,27 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You must be logged in"
+                      "example" : "You need to be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Invalid Input",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Invalid {QueryCasting}: {value}"
                     }
                   }
                 }
@@ -1558,9 +1551,9 @@
               "schema" : {
                 "type" : "object",
                 "properties" : {
-                  "theaterNumber" : {
-                    "type" : "number",
-                    "example" : 1
+                  "theaterName" : {
+                    "type" : "string",
+                    "example" : "Sala 1"
                   },
                   "numberOfRows" : {
                     "type" : "number",
@@ -1579,7 +1572,7 @@
           }
         },
         "responses" : {
-          "201" : {
+          "200" : {
             "description" : "Success",
             "content" : {
               "application/json" : {
@@ -1591,20 +1584,15 @@
                       "example" : "success"
                     },
                     "data" : {
-                      "type" : "object",
-                      "properties" : {
-                        "theater" : {
-                          "$ref" : "#/components/schemas/Theater"
-                        }
-                      }
+                      "$ref" : "#/components/schemas/Theater"
                     }
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Theater alredy exists",
+          "401" : {
+            "description" : "Duplicate key",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1616,7 +1604,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "Duplicate key error"
+                      "example" : "Duplicate field value: {value}. Please use another value!"
                     }
                   }
                 }
@@ -1709,7 +1697,27 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You do not have access to that document"
+                      "example" : "You need to be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Invalid _id: {id}."
                     }
                   }
                 }
@@ -1752,7 +1760,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "theater" : {
+                        "doc" : {
                           "$ref" : "#/components/schemas/Theater"
                         }
                       }
@@ -1775,7 +1783,27 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You do not have access to that document"
+                      "example" : "You need to be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Invalid credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Invalid _id: {id}."
                     }
                   }
                 }
@@ -1826,7 +1854,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "theater" : {
+                        "doc" : {
                           "$ref" : "#/components/schemas/Theater"
                         }
                       }
@@ -1849,7 +1877,27 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You must be logged in"
+                      "example" : "You need to be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Invalid credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Invalid _id: {id}."
                     }
                   }
                 }
@@ -1876,7 +1924,7 @@
           }
         } ],
         "responses" : {
-          "204" : {
+          "200" : {
             "description" : "Success",
             "content" : {
               "application/json" : {
@@ -1886,6 +1934,50 @@
                     "status" : {
                       "type" : "string",
                       "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "string",
+                      "example" : null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Invalid Credentials",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You need to be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Invalid params",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "No theater found with that ID"
                     }
                   }
                 }
@@ -1932,7 +2024,7 @@
           }
         },
         "responses" : {
-          "201" : {
+          "200" : {
             "description" : "Success",
             "content" : {
               "application/json" : {
@@ -1969,7 +2061,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "Duplicate key error"
+                      "example" : "Duplicate field value: {value}. Please use another value!"
                     }
                   }
                 }
@@ -2066,7 +2158,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "showtimes" : {
+                        "doc" : {
                           "type" : "array",
                           "items" : {
                             "$ref" : "#/components/schemas/Showtime"
@@ -2092,7 +2184,96 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You you must be logged"
+                      "example" : "You need to be logged"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/showtime/showtimesByTheater/{theaterId}" : {
+      "get" : {
+        "tags" : [ "Showtimes" ],
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Searches Showtime By Theater Id",
+        "operationId" : "searchShowtimeByTheaterId",
+        "description" : "Get showtimes by theater id",
+        "parameters" : [ {
+          "name" : "theaterId",
+          "in" : "path",
+          "description" : "_id of the theater needed",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "showtime" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/components/schemas/Showtime"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You need to be logged in"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Invalid theater: {theaterId}"
                     }
                   }
                 }
@@ -2135,13 +2316,33 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "showtime" : {
+                        "doc" : {
                           "type" : "array",
                           "items" : {
                             "$ref" : "#/components/schemas/Showtime"
                           }
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -2161,7 +2362,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "No document was found with that id"
+                      "example" : "No document found with that id"
                     }
                   }
                 }
@@ -2212,13 +2413,33 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "showtime" : {
+                        "doc" : {
                           "type" : "array",
                           "items" : {
                             "$ref" : "#/components/schemas/Showtime"
                           }
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -2238,7 +2459,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "No document was found with that id"
+                      "example" : "Invalid _id: {id}."
                     }
                   }
                 }
@@ -2275,6 +2496,30 @@
                     "status" : {
                       "type" : "string",
                       "example" : "success"
+                    },
+                    "data" : {
+                      "type" : "string",
+                      "example" : null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You need to be logged in"
                     }
                   }
                 }
@@ -2294,7 +2539,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "No document was found with that id"
+                      "example" : "No doc found with that id"
                     }
                   }
                 }
@@ -2384,6 +2629,26 @@
                     "message" : {
                       "type" : "string",
                       "example" : "You you must be logged"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "You do not have permission to perform this action"
                     }
                   }
                 }
@@ -2479,7 +2744,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "movies" : {
+                        "doc" : {
                           "type" : "array",
                           "items" : {
                             "$ref" : "#/components/schemas/Movie"
@@ -2505,7 +2770,7 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You you must be logged"
+                      "example" : "You need to be logged"
                     }
                   }
                 }
@@ -2552,7 +2817,7 @@
                     "data" : {
                       "type" : "object",
                       "properties" : {
-                        "movies" : {
+                        "doc" : {
                           "type" : "array",
                           "items" : {
                             "$ref" : "#/components/schemas/Movie"
@@ -2578,7 +2843,27 @@
                     },
                     "message" : {
                       "type" : "string",
-                      "example" : "You you must be logged"
+                      "example" : "You do not have permission to perform this action"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "status" : {
+                      "type" : "string",
+                      "example" : "fail"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Invalid _id: {id}."
                     }
                   }
                 }
@@ -3127,6 +3412,10 @@
             "format" : "mail",
             "example" : "elon@gmail.com"
           },
+          "isVerified" : {
+            "type" : "boolean",
+            "example" : true
+          },
           "photo" : {
             "type" : "string",
             "format" : "url",
@@ -3167,16 +3456,19 @@
           "address" : {
             "$ref" : "#/components/schemas/Address"
           },
-          "geoloc" : {
+          "location" : {
             "type" : "object",
             "properties" : {
-              "long" : {
-                "type" : "number",
-                "example" : -37.1815644
+              "type" : {
+                "type" : "string",
+                "example" : "Point"
               },
-              "lat" : {
-                "type" : "number",
-                "example" : -56.9209917
+              "coordinates" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "number",
+                  "example" : [ -37.1815644, -56.9209917 ]
+                }
               }
             }
           },
@@ -3220,21 +3512,25 @@
           "country" : {
             "type" : "string",
             "example" : "Argentina"
+          },
+          "postalCode" : {
+            "type" : "string",
+            "example" : 1000
           }
         }
       },
       "Theater" : {
         "type" : "object",
-        "required" : [ "theaterNumber", "cinema", "numberOfRows", "numberOfCols" ],
+        "required" : [ "theaterName", "cinema", "numberOfRows", "numberOfCols" ],
         "properties" : {
           "_id" : {
             "type" : "string",
             "format" : "ObjectoId",
             "example" : "d290f1ee6c544b0190e6d701748f0851"
           },
-          "theaterNumber" : {
-            "type" : "number",
-            "example" : 1
+          "theaterName" : {
+            "type" : "string",
+            "example" : "Sala 1"
           },
           "cinema" : {
             "$ref" : "#/components/schemas/Cinema/properties/_id"
@@ -3297,19 +3593,23 @@
                 }
               }
             }
+          },
+          "price" : {
+            "type" : "number",
+            "example" : 900
           }
         }
       },
       "Movie" : {
         "type" : "object",
-        "required" : [ "title", "genre", "synopsis", "premiereDate", "durationMin", "director", "actors" ],
+        "required" : [ "title", "genre", "synopsis", "premiered", "premiereDate", "duration", "director", "actors" ],
         "properties" : {
           "_id" : {
             "type" : "string",
             "format" : "ObjectoId",
             "example" : "d290f1ee6c544b0190e6d701748f0851"
           },
-          "title" : {
+          "name" : {
             "type" : "string",
             "example" : "The Grand Budapest Hotel"
           },
@@ -3325,11 +3625,16 @@
             "format" : "url",
             "example" : "https://www.imdb.com/title/tt2278388/mediaviewer/rm1834474496/?ref_=tt_ov_i"
           },
+          "premiered" : {
+            "type" : "boolean",
+            "example" : false
+          },
           "premiereDate" : {
             "type" : "string",
-            "format" : "date"
+            "format" : "date",
+            "example" : "2023-07-28T00:00:00.000Z"
           },
-          "durationMin" : {
+          "duration" : {
             "type" : "number",
             "example" : 120
           },
@@ -3344,10 +3649,15 @@
               "example" : [ "Ralph Fiennes", "Bill Murray" ]
             }
           },
-          "avgRating" : {
+          "ratingsAverage" : {
             "type" : "number",
             "format" : "float",
             "example" : 4.2
+          },
+          "ratingsQuantity" : {
+            "type" : "number",
+            "format" : "float",
+            "example" : 0
           }
         }
       },
