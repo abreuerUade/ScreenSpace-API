@@ -1,0 +1,81 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width')
+  title Booking Confirmation - Screen Space
+  style.
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    padding: 20px;
+    margin: 0;
+    }
+    .container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    }
+    h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    }
+    p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    }
+    .button {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    width: 150px;
+    }
+    .logo {
+    display: block;
+    margin: 0 auto;
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 20px;
+    }
+    .qr-code {
+    display: block;
+    margin: 0 auto;
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 20px;
+    text-align: center;
+    }
+.container
+  img.logo(src='https://res.cloudinary.com/dhjoeubqp/image/upload/v1683585374/ScreenSpace/logo_kwohda.png' alt='Screen Space logo')
+  h1 Booking Confirmation
+  p
+    | Thank you for booking your movie ticket with Screen Space! We&apos;re excited to confirm your booking details:
+  img.qr-code(src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example' alt='QR Code')
+  p(style='text-align: center; font-size: 18px;')
+    strong Booking Code:
+    |  65683321
+  p
+    strong Movie:
+    |  Avengers: Endgame
+  p
+    strong Date:
+    |  May 15, 2023
+  p
+    strong Time:
+    |  7:00 PM
+  p
+    strong Theater:
+    |  Screen Space Theater 3
+  p
+    strong Seat:
+    |  A5
+  p
+    | If you have any questions or need assistance, please don&apos;t hesitate to contact our support team at support@screenspace.com.

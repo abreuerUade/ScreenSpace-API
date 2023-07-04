@@ -2,7 +2,16 @@ const factory = require('../controllers/handlerFactory');
 const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 
-const createBooking = factory.createOne(Booking);
+const createBooking = catchAsync(async (req, res, next) => {
+    req.body = { ...req.body, user: res.locals.user.id };
+
+    const booking = await Booking.create(req.body);
+
+    res.status(201).json({
+        status: 'success',
+        data: booking,
+    });
+});
 
 const getAllBookings = catchAsync(async (req, res, next) => {
     const allBookings = await Booking.find({
@@ -16,9 +25,7 @@ const getAllBookings = catchAsync(async (req, res, next) => {
     res.status(200).json({
         status: 'success',
         results: bookings.length,
-        data: {
-            bookings,
-        },
+        data: bookings,
     });
 });
 
@@ -33,9 +40,7 @@ const getBooking = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
         status: 'success',
-        data: {
-            booking,
-        },
+        data: booking,
     });
 });
 

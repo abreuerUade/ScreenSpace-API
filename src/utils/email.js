@@ -4,9 +4,10 @@ const pug = require('pug');
 const htmlToText = require('html-to-text');
 
 class Email {
-    constructor(user, url) {
+    constructor(user, url, mailOptions = null) {
         this.to = user.email;
         this.url = url;
+        this.mailOptions = mailOptions;
         this.from = `Screen Space <${process.env.EMAIL_FROM}>`;
     }
 
@@ -59,6 +60,10 @@ class Email {
 
     async sendResetPassword() {
         await this.send('resetPassword', 'Password reset');
+    }
+
+    async sendBookingConfirmation() {
+        await this.send('bookingConfirmation', 'Booking Confirmation');
     }
 }
 
