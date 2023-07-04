@@ -39,17 +39,19 @@ const showtimeSchema = new Schema(
     }
 );
 
-// showtimeSchema.virtual('finishTime').get(function () {
-//     return new Date(
-//         new Date(this.startTime).setMinutes(
-//             this.startTime.getMinutes() + this.movie.duration + 30
-//         ) // Duración mas tiempo de limpieza
-//     );
-// });
-
-showtimeSchema.post('save', async function (doc, next) {
-    await doc.populate('movie');
+showtimeSchema.virtual('finishTime').get(function () {
+    return new Date(
+        new Date(
+            this.startTime.getTime() +
+                this.movie.duration * 60 * 1000 +
+                30 * 60 * 1000
+        ) // Duración mas tiempo de limpieza
+    );
 });
+
+// showtimeSchema.post('save', async function (doc, next) {
+//     await doc.populate('movie');
+// });
 
 showtimeSchema.index({ theater: 1, startTime: 1 }, { unique: true });
 

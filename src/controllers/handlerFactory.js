@@ -82,10 +82,9 @@ exports.getAll = (Model, popOptions) =>
             .paginate();
 
         if (req.query.startTime) {
+            const ONE_DAY = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             const startTime = new Date(req.query.startTime);
-            const finishTime = new Date(
-                new Date(startTime).setMinutes(startTime.getMinutes() + 24 * 60)
-            );
+            const finishTime = new Date(startTime.getTime() + ONE_DAY);
 
             features.query = features.query.find({
                 startTime: {

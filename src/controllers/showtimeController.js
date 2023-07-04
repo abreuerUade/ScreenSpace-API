@@ -18,29 +18,46 @@ const createShowtime = catchAsync(async (req, res, next) => {
         next(new AppError('The showtime cannot be before today', 400));
     }
 
-    // const finishTime = new Date(
-    //     new Date(this.startTime).setMinutes(
-    //         this.startTime.getMinutes() + this.movie.duration + 30
-    //     )
-    // );
+    const DURATION = movie.duration * 60 * 1000; // hours*minutes*seconds*milliseconds
+    const CLEANING_TIME = 30 * 60 * 1000;
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    const showtimeDate = new Date(
+        `${new Date(req.body.startTime).getFullYear()}-${
+            new Date(req.body.startTime).getMonth() + 1
+        }-${new Date(req.body.startTime).getDate()}Z`
+    );
 
-    // let showtimes = await Showtime.find({ theater: req.body.theater });
+    const showtimeDateEnd = new Date(showtimeDate.getTime() + ONE_DAY);
+    const startTime = new Date(req.body.startTime);
+    const finishTime = new Date(startTime.getTime() + DURATION + CLEANING_TIME);
 
-    // showtimes = showtimes.filter(item => {
-    //     return item.startTime.getDay() === req.body.startTime.getDay();
-    // });
+    const showtimes = await Showtime.find({
+        theater: req.body.theater,
+        startTime: {
+            $gte: showtimeDate,
+            $lte: showtimeDateEnd,
+        },
+    }).populate('movie');
 
-    // showtimes.forEach(item => {
-    //     if (
-    //         req.body.startTime.getTime() >= item.startTime.getTime() &&
-    //         req.body.startTime.getTime() <= item.finishTime.getTime()
-    //     ) {
-    //         next(new AppError('The showtime is overlapped', 400));
-    //     }
-    // });
+    let avilable = true;
 
+    showtimes.forEach(item => {
+        // console.log(startTime, finishTime, item.startTime, item);
+        if (
+            !(
+                (startTime.getTime() < item.startTime.getTime() &&
+                    finishTime.getTime() < item.startTime.getTime()) ||
+                startTime.getTime() > new Date(item.finishTime).getTime()
+            )
+        ) {
+            return (avilable = false);
+        }
+    });
+
+    if (!avilable) {
+        return next(new AppError('The showtime is not available', 400));
+    }
     const newDoc = await Showtime.create(req.body);
-
     if (!newDoc) {
         return next(new AppError('Cannot create showtime', 400));
     }
@@ -71,44 +88,6 @@ const createShowtime = catchAsync(async (req, res, next) => {
 });
 
 const getShowtime = factory.getOne(Showtime, ['theater', 'movie', 'cinema']);
-
-// const getAllShowtimes = catchAsync(async (req, res, next) => {
-//     let query = Showtime.find()
-//         .populate('movie')
-//         .populate('theater')
-//         .populate('cinema');
-
-//     const features = new APIFeatures(query, req.query)
-//         .filter()
-//         .sort()
-//         .limitFields()
-//         .paginate();
-
-//     if (req.query.startTime) {
-//         const startTime = new Date(req.query.startTime);
-//         const finishTime = new Date(
-//             new Date(startTime).setMinutes(startTime.getMinutes() + 24 * 60)
-//         );
-
-//         console.log(startTime, finishTime);
-//         features.query = features.query.find({
-//             startTime: {
-//                 $gte: startTime,
-//                 $lte: finishTime,
-//             },
-//         });
-//     }
-
-//     const doc = await features.query;
-
-//     res.status(200).json({
-//         status: 'success',
-//         results: doc.length,
-//         data: {
-//             doc,
-//         },
-//     });
-// });
 
 const getAllShowtimes = factory.getAll(Showtime, [
     'theater',
