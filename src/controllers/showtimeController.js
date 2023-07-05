@@ -32,7 +32,6 @@ const createShowtime = catchAsync(async (req, res, next) => {
             new Date(req.body.startTime).getMonth() + 1
         }-${new Date(req.body.startTime).getDate()}Z`
     );
-
     const showtimeDateEnd = new Date(showtimeDate.getTime() + ONE_DAY);
     const startTime = new Date(req.body.startTime);
     const finishTime = new Date(startTime.getTime() + DURATION + CLEANING_TIME);
@@ -43,12 +42,11 @@ const createShowtime = catchAsync(async (req, res, next) => {
             $gte: showtimeDate,
             $lte: showtimeDateEnd,
         },
-    });
+    }).populate('movie');
 
-    let avilable = true;
+    let available = true;
 
     showtimes.forEach(item => {
-        // console.log(startTime, finishTime, item.startTime, item);
         if (
             !(
                 (startTime.getTime() < item.startTime.getTime() &&
@@ -56,11 +54,11 @@ const createShowtime = catchAsync(async (req, res, next) => {
                 startTime.getTime() > new Date(item.finishTime).getTime()
             )
         ) {
-            return (avilable = false);
+            return (available = false);
         }
     });
 
-    if (!avilable) {
+    if (!available) {
         return next(new AppError('The showtime is not available', 400));
     }
     const newDoc = await Showtime.create(req.body);
