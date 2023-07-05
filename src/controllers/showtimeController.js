@@ -9,13 +9,19 @@ const APIFeatures = require('../utils/apiFeatures');
 const createShowtime = catchAsync(async (req, res, next) => {
     const movie = await Movie.findById(req.body.movie);
 
-    if (Date.parse(req.body.startTime) < Date.parse(movie.premiereDate)) {
-        next(
+    if (
+        new Date(req.body.startTime).getTime() <
+        new Date(movie.premiereDate).getTime()
+    ) {
+        return next(
             new AppError('The showtime cannot be before the premiere date', 400)
         );
     }
-    if (Date.parse(req.body.startTime) < Date.parse(new Date())) {
-        next(new AppError('The showtime cannot be before today', 400));
+    if (
+        new Date(req.body.startTime).getTime() <
+        new Date().setHours(new Date().getHours() - 3)
+    ) {
+        return next(new AppError('The showtime cannot be before today', 400));
     }
 
     const DURATION = movie.duration * 60 * 1000; // hours*minutes*seconds*milliseconds
