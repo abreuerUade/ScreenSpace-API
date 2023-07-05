@@ -19,7 +19,13 @@ const createBooking = catchAsync(async (req, res, next) => {
 const getAllBookings = catchAsync(async (req, res, next) => {
     const allBookings = await Booking.find({
         user: res.locals.user.id,
-    }).populate('showtime', '-seats -__v');
+    }).populate({
+        path: 'showtime',
+        select: '-seats -__v',
+        populate: {
+            path: 'movie theater cinema',
+        },
+    });
 
     const bookings = allBookings.filter(booking => {
         return Date.parse(booking.showtime.startTime) > new Date();

@@ -31,10 +31,10 @@ const bookingSchema = new Schema({
     },
 });
 
-bookingSchema.post(/^find/, async function (doc, next) {
-    await doc.populate('showtime.movie showtime.theater');
-    await doc.populate('showtime.theater.cinema');
-});
+// bookingSchema.post(/^find/, async function (doc, next) {
+//     doc.populate('showtime.movie');
+//     next();
+// });
 
 bookingSchema.pre('save', async function (next) {
     // ver asientos disponibles
