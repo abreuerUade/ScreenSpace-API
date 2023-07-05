@@ -37,7 +37,7 @@ const createShowtime = catchAsync(async (req, res, next) => {
             $gte: showtimeDate,
             $lte: showtimeDateEnd,
         },
-    }).populate('movie');
+    });
 
     let avilable = true;
 

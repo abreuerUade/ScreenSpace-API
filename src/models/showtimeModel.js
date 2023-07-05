@@ -49,9 +49,9 @@ showtimeSchema.virtual('finishTime').get(function () {
     );
 });
 
-// showtimeSchema.post('save', async function (doc, next) {
-//     await doc.populate('movie');
-// });
+showtimeSchema.post('save', async function (doc, next) {
+    await doc.populate('movie');
+});
 
 showtimeSchema.index({ theater: 1, startTime: 1 }, { unique: true });
 
