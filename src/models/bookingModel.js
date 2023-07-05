@@ -16,7 +16,6 @@ const bookingSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Showtime',
         require: true,
-        autopopulate: false,
     },
     seats: [{ row: Number, column: Number }],
     total: Number,
@@ -38,11 +37,12 @@ bookingSchema.pre(/^find/, async function (next) {
 
 bookingSchema.pre('save', async function (next) {
     // ver asientos disponibles
+    await this.populate('showtime.movie');
     const showtime = await Showtime.findById(this.showtime);
     const seats = showtime.seats.filter(seat => {
         return seat.taken === true;
     });
-    console.log(seats);
+
     this.seats.forEach(item => {
         if (
             seats.find(
@@ -60,6 +60,9 @@ bookingSchema.pre('save', async function (next) {
 
 bookingSchema.post('save', async function (doc, next) {
     // Modificar asientos disponilbes en funcion
+    await doc.populate('showtime.movie showtime.theater');
+    await doc.populate('showtime.theater.cinema');
+
     const showtime = await Showtime.findById(doc.showtime);
     showtime.availableSeatsLeft =
         showtime.availableSeatsLeft - doc.seats.length;

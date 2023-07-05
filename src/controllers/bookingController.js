@@ -1,11 +1,14 @@
 const factory = require('../controllers/handlerFactory');
 const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
+const Email = require('../utils/email');
 
 const createBooking = catchAsync(async (req, res, next) => {
     req.body = { ...req.body, user: res.locals.user.id };
 
     const booking = await Booking.create(req.body);
+    // console.log(booking);
+    await new Email(res.locals.user, booking).sendBookingConfirmation();
 
     res.status(201).json({
         status: 'success',

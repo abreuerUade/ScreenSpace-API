@@ -4,10 +4,9 @@ const pug = require('pug');
 const htmlToText = require('html-to-text');
 
 class Email {
-    constructor(user, url, mailOptions = null) {
+    constructor(user, url) {
         this.to = user.email;
         this.url = url;
-        this.mailOptions = mailOptions;
         this.from = `Screen Space <${process.env.EMAIL_FROM}>`;
     }
 
