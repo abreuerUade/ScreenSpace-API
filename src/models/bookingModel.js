@@ -31,8 +31,9 @@ const bookingSchema = new Schema({
     },
 });
 
-bookingSchema.pre(/^find/, async function (next) {
-    // find all bookings foa user with showtime grater than now
+bookingSchema.post(/^find/, async function (doc, next) {
+    await doc.populate('showtime.movie showtime.theater');
+    await doc.populate('showtime.theater.cinema');
 });
 
 bookingSchema.pre('save', async function (next) {
