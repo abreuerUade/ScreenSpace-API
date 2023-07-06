@@ -15,7 +15,7 @@ const createBooking = catchAsync(async (req, res, next) => {
         data: booking,
     });
 });
-
+const showtimeDate = new Date().setHours(new Date().getHours() - 3);
 const getAllBookings = catchAsync(async (req, res, next) => {
     const allBookings = await Booking.find({
         user: res.locals.user.id,
@@ -28,7 +28,10 @@ const getAllBookings = catchAsync(async (req, res, next) => {
     });
 
     const bookings = allBookings.filter(booking => {
-        return Date.parse(booking.showtime.startTime) > new Date();
+        return (
+            Date.parse(booking.showtime.startTime) >
+            new Date().setHours(new Date().getHours() - 3)
+        );
     });
 
     res.status(200).json({
