@@ -21,12 +21,6 @@ const userSchema = new Schema({
         type: String,
         require: true,
     },
-    bookings: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Booking',
-        },
-    ],
     active: {
         type: Boolean,
         default: true,

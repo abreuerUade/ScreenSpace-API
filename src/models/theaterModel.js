@@ -32,11 +32,6 @@ const theaterSchema = new Schema({
 });
 theaterSchema.index({ theaterName: 1, cinema: 1 }, { unique: true });
 
-// theaterSchema.pre(/^find/, async function (next) {
-//     this.find({ active: { $ne: false } });
-//     next();
-// });
-
 theaterSchema.post(/elete$/, async function (doc, next) {
     await Showtime.deleteMany({ theater: doc._id });
     next();

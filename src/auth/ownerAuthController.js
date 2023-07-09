@@ -60,7 +60,7 @@ const verifyEmail = catchAsync(async (req, res, next) => {
     owner.emailToken = undefined;
     owner.emailTokenExpires = undefined;
     await owner.save();
-    // res.status(200).render('accountCreated');
+
     res.status(200).render('accountCreated');
 });
 
@@ -130,12 +130,9 @@ const forgotPassword = catchAsync(async (req, res, next) => {
     // Generate random new password and update user
     const tempPassword = crypto.randomBytes(8).toString('hex');
     // generate token
-    // const token = owner.createEmailToken();
+
     owner.password = tempPassword;
     await owner.save({ validateBeforeSave: false });
-    // const resetURL = `${req.protocol}://${req.get(
-    //     'host'
-    // )}/api/v1/owners/resetPassword/${token}`;
 
     try {
         await new Email(owner, tempPassword).sendResetPassword();
@@ -149,36 +146,8 @@ const forgotPassword = catchAsync(async (req, res, next) => {
     res.status(200).json({
         status: 'success',
         message: 'Token sent to email!',
-        // token, //Sacar
     });
 });
-
-// const resetPassword = catchAsync(async (req, res, next) => {
-//     // 1- Get owner based token
-//     const hashedToken = crypto
-//         .createHash('sha256')
-//         .update(req.params.token)
-//         .digest('hex');
-
-//     const owner = await Owner.findOne({
-//         emailToken: hashedToken,
-//         emailTokenExpires: { $gt: Date.now() },
-//     });
-
-//     if (!owner) {
-//         return next(new AppError('Token expired or invalid', 400));
-//     }
-
-//     owner.password = req.body.password;
-//     owner.emailToken = null;
-//     owner.emailTokenExpires = null;
-//     await owner.save({ validateBeforeSave: false });
-
-//     res.status(200).json({
-//         status: 'success',
-//         message: 'Password Updated',
-//     });
-// });
 
 const updatePassword = catchAsync(async (req, res, next) => {
     const owner = await Owner.findOne({ email: req.body.email }).select(
@@ -203,6 +172,5 @@ module.exports = {
     login,
     logout,
     forgotPassword,
-    // resetPassword,
     updatePassword,
 };

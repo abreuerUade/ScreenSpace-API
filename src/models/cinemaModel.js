@@ -43,36 +43,7 @@ const cinemaSchema = new Schema({
     },
 });
 
-// cinemaSchema.pre('save', async function (next) {
-//     const address = this.address;
-
-//     const addressString = `direccion=${address.street} ${address.number}&localidad_censal=${address.county}&provincia=${address.state}`;
-
-//     const data = await fetch(
-//         `https://apis.datos.gob.ar/georef/api/direcciones?${addressString}`
-//     ).then(response => response.json());
-
-//     if (data.direcciones.length === 0) {
-//         return next(new AppError('Invalid Address', 400));
-//     }
-//     const validAddress = data.direcciones[0];
-
-//     address.street = validAddress.calle.nombre;
-//     address.number = validAddress.altura.valor;
-//     address.county = validAddress.departamento.nombre;
-//     address.city = validAddress.localidad_censal.nombre;
-//     address.state = validAddress.provincia.nombre;
-//     address.country = 'ARGENTINA';
-//     this.localization.lat = validAddress.ubicacion.lat;
-//     this.localization.lon = validAddress.ubicacion.lon;
-
-//     next();
-// });
-
-// cinemaSchema.pre(/^find/, async function (next) {
-//     this.find({ active: { $ne: false } });
-//     next();
-// });
+cinemaSchema.index({ company: 1, name: 1 }, { unique: true });
 
 cinemaSchema.post(/elete$/, async function (doc, next) {
     const theaters = await Theater.find({ cinema: doc._id });

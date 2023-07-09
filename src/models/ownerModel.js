@@ -58,11 +58,6 @@ ownerSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 12);
 });
 
-// ownerSchema.pre(/^find/, async function (next) {
-//     this.find({ active: { $ne: false } });
-//     next();
-// });
-
 ownerSchema.post(/elete$/, async function (doc, next) {
     const cinemas = await Cinema.find({ owner: doc._id });
 

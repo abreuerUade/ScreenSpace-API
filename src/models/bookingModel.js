@@ -31,11 +31,6 @@ const bookingSchema = new Schema({
     },
 });
 
-// bookingSchema.post(/^find/, async function (doc, next) {
-//     doc.populate('showtime.movie');
-//     next();
-// });
-
 bookingSchema.pre('save', async function (next) {
     // ver asientos disponibles
     await this.populate('showtime.movie');
@@ -75,11 +70,6 @@ bookingSchema.post('save', async function (doc, next) {
     });
 
     await showtime.save({ validateBeforeSave: true });
-
-    const user = await User.findById(doc.user);
-    const bookings = [...user.bookings, this.id];
-    user.bookings = bookings;
-    await user.save({ validateBeforeSave: false });
 });
 
 bookingSchema.post(/elete$/, async function (doc, next) {

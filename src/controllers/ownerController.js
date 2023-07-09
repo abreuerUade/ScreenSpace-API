@@ -79,17 +79,6 @@ const getOwner = factory.getOne(Owner);
 
 const updateOwner = factory.updateOne(Owner); // Do not update pass
 
-// const deleteOwner = catchAsync(async (req, res, next) => {
-//     const owner = await Owner.findById(res.locals.user.id);
-
-//     owner.cinemas.forEach(async item => {
-//         const cinema = await Cinema.findById(item).select('+skipMiddleware');
-//         cinema.skipMiddleware = true;
-//         await cinema.save({ validateBeforeSave: false });
-//         await Cinema.findByIdAndDelete(item);
-//     });
-// });
-
 module.exports = {
     uploadOwnerPhoto,
     resizeOwnerPhoto,
@@ -98,5 +87,4 @@ module.exports = {
     deleteMe,
     getOwner,
     updateOwner,
-    // deleteOwner,
 };
